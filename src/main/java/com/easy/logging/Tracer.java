@@ -3,7 +3,7 @@ package com.easy.logging;
 import com.easy.logging.trace.Attachment;
 
 /**
- * trace the chain of invocation across servers
+ *
  * there are two functions for tracing:
  * extract: extract the attachment from up server that usually is a service consumer
  * inject: inject a attachment to down server that usually is a service provider
