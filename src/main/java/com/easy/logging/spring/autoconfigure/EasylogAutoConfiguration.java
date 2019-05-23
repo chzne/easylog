@@ -143,8 +143,8 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
 
     @Bean
     @ConditionalOnMissingBean
-    public InvocationDelegator invocationDelegator(LoggingAdvice loggingAdvice,TraceAdvice traceAdvice) {
-        DefaultInvocationDelegator delegator = new DefaultInvocationDelegator(new Advice[]{loggingAdvice,traceAdvice});
+    public InvocationDelegator invocationDelegator(ObjectProvider<Advice[]> objectProviderAdvices) {
+        DefaultInvocationDelegator delegator = new DefaultInvocationDelegator(objectProviderAdvices.getIfAvailable());
         return delegator;
     }
 

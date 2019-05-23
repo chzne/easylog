@@ -32,8 +32,10 @@ public class DubboInvocationAdapter extends InvocationAdapter {
         return rpcInvocation.getAttachments();
     }
 
+
+
     @Override
-    public Object proceed() throws RpcException {
+    public Object doInvoke() throws RpcException {
         return invoker.invoke(rpcInvocation);
     }
 

@@ -12,6 +12,12 @@ public interface Invocation {
 
     Object proceed() throws Throwable;
 
+
+
+    public long getStartTime();
+
+    public long getEndTime();
+
     @Nullable
     public Method getMethod();
 

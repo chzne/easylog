@@ -1,5 +1,6 @@
 package com.easy.logging.provider.web;
 
+import com.alibaba.dubbo.rpc.RpcException;
 import com.easy.logging.invocation.adapter.InvocationAdapter;
 
 import javax.servlet.FilterChain;
@@ -25,9 +26,10 @@ public class ServletInvocationAdapter extends InvocationAdapter {
     }
 
     @Override
-    public Object proceed() throws Throwable {
-
-         filterChain.doFilter(request,response);
-         return Void.class;
+    public Object doInvoke() throws Throwable {
+        filterChain.doFilter(request,response);
+        return Void.class;
     }
+
+
 }

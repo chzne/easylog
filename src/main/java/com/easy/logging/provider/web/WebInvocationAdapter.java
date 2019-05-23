@@ -20,10 +20,10 @@ public class WebInvocationAdapter extends InvocationAdapter {
         setArgurments(methodInvocation.getArguments());
         this.methodInvocation = methodInvocation;
         target = getTargetClass(methodInvocation);
-
     }
+
     @Override
-    public Object proceed() throws Throwable {
+    public Object doInvoke() throws Throwable {
         return methodInvocation.proceed();
     }
 

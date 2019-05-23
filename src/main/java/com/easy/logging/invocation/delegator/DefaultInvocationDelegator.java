@@ -31,17 +31,19 @@ public class DefaultInvocationDelegator implements InvocationDelegator {
         boolean throughException = false;
         Object result=null;
         try{
-            invocation.setAttribute(START_TIME_ATTRIBUTE_KEY,System.currentTimeMillis());
+
+
             for (int i = 0; i < advices.length; i++) {
                 advices[i].before(invocation);
             }
             result = invocation.proceed();
-            invocation.setAttribute(END_TIME_ATTRIBUTE_KEY,System.currentTimeMillis());
+
+
             return result;
 
         }catch (Throwable ex){
             throughException=true;
-            invocation.setAttribute(END_TIME_ATTRIBUTE_KEY,System.currentTimeMillis());
+
             ExceptionHolder exceptionHolder = ExceptionHolder.currentExceptionHolder();
             if(!exceptionHolder.hasException()){
                 exceptionHolder.setException(ex);
