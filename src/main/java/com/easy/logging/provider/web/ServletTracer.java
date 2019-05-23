@@ -1,4 +1,4 @@
-package com.easy.logging.provider.servlet;
+package com.easy.logging.provider.web;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.easy.logging.Tracer;

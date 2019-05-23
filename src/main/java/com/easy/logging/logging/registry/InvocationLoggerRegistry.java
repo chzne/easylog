@@ -1,39 +1,44 @@
 package com.easy.logging.logging.registry;
 
-import com.easy.logging.LoggerRegistry;
-import com.easy.logging.logging.logger.CompositeInvocationLogger;
 import com.easy.logging.Invocation;
 import com.easy.logging.InvocationLogger;
+import com.easy.logging.LoggerRegistry;
 
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class InvocationLoggerRegistry implements LoggerRegistry {
 
-    protected HashMap<Class<? extends Invocation>, CompositeInvocationLogger> loggerHashMap = new HashMap<>();
-
-
-
-
+    protected List<InvocationLogger> loggerList = new LinkedList<>();
 
     @Override
-    public void registor(Class<? extends Invocation> invocationCls, InvocationLogger logger) {
-        CompositeInvocationLogger composite = loggerHashMap.get(invocationCls);
-        if(composite==null){
-            composite = new CompositeInvocationLogger();
-            composite.addLogger(logger);
+    public InvocationLogger getLoggerWithHighPriority(Class<? extends Invocation> invocation) {
+        InvocationLogger lastLoggerWithHighPriority=null;
+        int priority = 0;
+        for (int i = 0; i < loggerList.size(); i++) {
+            InvocationLogger logger = loggerList.get(i);
+            int loggerPriority = logger.getPriority(invocation);
+            if(lastLoggerWithHighPriority==null){
+                lastLoggerWithHighPriority=logger;
+                priority=loggerPriority;
+            }else{
+                if(priority<loggerPriority){
+                    priority = loggerPriority;
+                    lastLoggerWithHighPriority=logger;
+                }
+            }
         }
-        loggerHashMap.put(invocationCls,composite);
+        return lastLoggerWithHighPriority;
     }
 
     @Override
-    public List<InvocationLogger> getLoggers(Class<? extends Invocation> invocation) {
-
-        return loggerHashMap.get(invocation).getLoggers();
+    public void registor(InvocationLogger logger) {
+        if(!loggerList.contains(logger)){
+            loggerList.add(logger);
+        }
     }
 
-    @Override
-    public CompositeInvocationLogger getCompositeLogger(Class<? extends Invocation> invocation) {
-        return loggerHashMap.get(invocation);
-    }
+
+
+
 }

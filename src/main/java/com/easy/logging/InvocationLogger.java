@@ -1,6 +1,9 @@
 package com.easy.logging;
 
-public interface InvocationLogger<T extends Invocation> {
+public interface InvocationLogger<T extends Invocation>   {
+
+
+    public int getPriority(Class<? extends Invocation> invocation);
 
     public void before(T invocation);
 

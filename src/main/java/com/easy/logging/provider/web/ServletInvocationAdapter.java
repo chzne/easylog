@@ -1,4 +1,4 @@
-package com.easy.logging.provider.servlet;
+package com.easy.logging.provider.web;
 
 import com.easy.logging.invocation.adapter.InvocationAdapter;
 

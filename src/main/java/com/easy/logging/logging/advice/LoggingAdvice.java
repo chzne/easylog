@@ -1,12 +1,16 @@
 package com.easy.logging.logging.advice;
 
 import com.easy.logging.Advice;
-import com.easy.logging.LoggerRegistry;
-import com.easy.logging.logging.logger.CompositeInvocationLogger;
 import com.easy.logging.Invocation;
+import com.easy.logging.InvocationLogger;
+import com.easy.logging.LoggerRegistry;
 import org.springframework.core.Ordered;
 
+import java.util.List;
+
 public class LoggingAdvice implements Advice, Ordered {
+
+    protected final static String INVOCATION_LOGGER_ATTRIBUTE_NAME="invocation_logger_attribute_name";
 
     private final LoggerRegistry loggerRegistry;
 
@@ -16,21 +20,21 @@ public class LoggingAdvice implements Advice, Ordered {
 
     @Override
     public void before(Invocation invocation) {
-
-        CompositeInvocationLogger logger = loggerRegistry.getCompositeLogger(invocation.getClass());
+        InvocationLogger logger = loggerRegistry.getLoggerWithHighPriority(invocation.getClass());
+        invocation.setAttribute(INVOCATION_LOGGER_ATTRIBUTE_NAME,logger);
         logger.before(invocation);
-
     }
 
     @Override
     public void after(Invocation invocation, Object result) {
-        CompositeInvocationLogger logger = loggerRegistry.getCompositeLogger(invocation.getClass());
+        InvocationLogger logger = (InvocationLogger) invocation.getAttribute(INVOCATION_LOGGER_ATTRIBUTE_NAME);
         logger.after(invocation,result);
     }
 
     @Override
     public void throwing(Invocation invocation, Throwable throwable) {
-
+        InvocationLogger logger = (InvocationLogger) invocation.getAttribute(INVOCATION_LOGGER_ATTRIBUTE_NAME);
+        logger.throwing(invocation,throwable);
     }
 
     /**

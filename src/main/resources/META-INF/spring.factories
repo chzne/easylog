@@ -1,3 +1,5 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.easy.logging.spring.autoconfigure.EasylogAutoConfiguration
+com.easy.logging.spring.autoconfigure.EasylogAutoConfiguration,\
+  com.easy.logging.provider.web.LogWebAutoConfiguration,\
+  com.easy.logging.provider.mybatis.LogMybatisAutoconfiguration

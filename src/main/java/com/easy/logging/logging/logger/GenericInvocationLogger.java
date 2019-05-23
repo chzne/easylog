@@ -4,7 +4,7 @@ import com.easy.logging.Invocation;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class GenericInvocationLogger<T extends Invocation> extends AbstractInvocationLogger {
+public class GenericInvocationLogger<T extends Invocation> extends AbstractInvocationLogger<T> {
 
     protected final static String DEFAULT_INVOCATION_BEFORE_LOG_PREFIX="start:";
 
@@ -44,7 +44,7 @@ public class GenericInvocationLogger<T extends Invocation> extends AbstractInvoc
     }
 
     @Override
-    public Message beforeMessage(Invocation invocation) {
+    public Message beforeMessage(T invocation) {
         String method = invocation.getMethod().getName();
         String placeHolder = getPlaceHolder(invocation.getArgurments().length);
         //return super.getFormattedMessage(loggingInvocation);
@@ -54,7 +54,7 @@ public class GenericInvocationLogger<T extends Invocation> extends AbstractInvoc
     }
 
     @Override
-    public Message afterMessage(Invocation invocation,Object result) {
+    public Message afterMessage(T invocation,Object result) {
         String format ="return:[{}]";
         Class<?> type = invocation.getMethod().getReturnType();
         if(type.getName().equals("void")){
@@ -65,9 +65,14 @@ public class GenericInvocationLogger<T extends Invocation> extends AbstractInvoc
     }
 
 
+    @Override
+    public int getPriority(Class<? extends Invocation> invocation) {
+
+        return 0;
+    }
 
     @Override
-    public void throwing(Invocation invocation, Throwable throwable) {
+    public void throwing(T invocation, Throwable throwable) {
         String format = "发生异常:";
         String message ="";
         if(throwable instanceof Exception){
@@ -83,4 +88,7 @@ public class GenericInvocationLogger<T extends Invocation> extends AbstractInvoc
 
         delegate(invocation,format,message,"");
     }
+
+
+
 }

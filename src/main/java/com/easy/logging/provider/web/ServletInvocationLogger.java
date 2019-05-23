@@ -1,5 +1,6 @@
-package com.easy.logging.provider.servlet;
+package com.easy.logging.provider.web;
 
+import com.easy.logging.Invocation;
 import com.easy.logging.logging.logger.AbstractInvocationLogger;
 import com.easy.logging.logging.logger.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -271,6 +272,14 @@ public class ServletInvocationLogger extends AbstractInvocationLogger<ServletInv
     }
 
 
+
+    @Override
+    public int getPriority(Class<? extends Invocation> invocation) {
+        if(invocation.getName().equalsIgnoreCase(ServletInvocationAdapter.class.getName())){
+            return 8;
+        }
+        return -1;
+    }
 
     @Override
     public void throwing(ServletInvocationAdapter invocation, Throwable throwable) {

@@ -1,10 +1,9 @@
-package com.easy.logging.provider.servlet;
+package com.easy.logging.provider.web;
 
 import com.easy.logging.Advisor;
 import com.easy.logging.InvocationDelegator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.FilterChain;
@@ -13,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @Slf4j
-public class ServletAdvisor extends OncePerRequestFilter implements HandlerInterceptor, Advisor {
+public class ServletAdvisor extends OncePerRequestFilter implements  Advisor {
 
     private final InvocationDelegator delegator;
 
@@ -23,8 +22,6 @@ public class ServletAdvisor extends OncePerRequestFilter implements HandlerInter
 
     public ServletAdvisor(InvocationDelegator delegator){
         this.delegator= delegator;
-
-
     }
 
     public boolean isIncludePayload(){

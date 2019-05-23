@@ -1,1 +1,1 @@
-dubboAdvisor=DubboAdvisor
+dubboAdvisor=com.easy.logging.provider.dubbo.DubboAdvisor

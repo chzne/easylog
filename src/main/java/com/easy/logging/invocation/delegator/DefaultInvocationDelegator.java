@@ -15,19 +15,15 @@ import static com.easy.logging.Invocation.START_TIME_ATTRIBUTE_KEY;
 
 
 @Slf4j
-public class AdviceInvocationDelegator implements InvocationDelegator {
+public class DefaultInvocationDelegator implements InvocationDelegator {
 
     private final Advice[] advices;
 
 
-    public AdviceInvocationDelegator(ObjectProvider<Advice[]> advices){
-        this.advices = advices.getIfAvailable();
+    public DefaultInvocationDelegator(Advice[] advices){
+        this.advices = advices;
     }
 
-    @Override
-    public List<Advice> getAdvices() {
-        return Arrays.asList(advices);
-    }
 
     @Override
     public Object invoke(Invocation invocation) throws Throwable {
