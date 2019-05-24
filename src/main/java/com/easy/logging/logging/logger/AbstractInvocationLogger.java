@@ -6,9 +6,6 @@ import com.easy.logging.spring.annotation.Logging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.easy.logging.Invocation.END_TIME_ATTRIBUTE_KEY;
-import static com.easy.logging.Invocation.START_TIME_ATTRIBUTE_KEY;
-
 public abstract class AbstractInvocationLogger<T extends Invocation> implements InvocationLogger<T> {
 
     protected boolean includeLoggingAnnotationValue = true;
@@ -60,10 +57,10 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
         Message message = afterMessage(invocation,result);
         String elapsedTime ="";
         if(isIncludeElapsedTime()){
-            long start = (long) invocation.getAttribute(START_TIME_ATTRIBUTE_KEY);
-            long end = (long) invocation.getAttribute(END_TIME_ATTRIBUTE_KEY);
-            long elapsed = end - start;
-            elapsedTime="["+getElaspedTimeName()+" "+elapsed+"ms]";
+            long start = (long) invocation.getStartTime();
+            long end = (long) invocation.getEndTime();
+            long duration = end - start;
+            elapsedTime="["+getElaspedTimeName()+" "+duration+"ms]";
         }
 
         delegate(invocation,message.getFormat(),message.getMessage(),elapsedTime);

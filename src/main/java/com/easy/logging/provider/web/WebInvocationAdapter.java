@@ -24,6 +24,7 @@ public class WebInvocationAdapter extends InvocationAdapter {
 
     @Override
     public Object doInvoke() throws Throwable {
+
         return methodInvocation.proceed();
     }
 

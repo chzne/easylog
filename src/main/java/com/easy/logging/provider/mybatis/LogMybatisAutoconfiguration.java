@@ -54,7 +54,7 @@ import java.util.Map;
 
     @Bean
     @ConditionalOnMissingBean
-    public MybatisProxyPointcutAdvisor webProxyPointcutAdvisor(InvocationDelegator invocationDelegator, MybatisPackagePointcut pointcut) {
+    public MybatisProxyPointcutAdvisor mybatisProxyPointcutAdvisor(InvocationDelegator invocationDelegator, MybatisPackagePointcut pointcut) {
         MybatisAdvisor advice = new MybatisAdvisor(invocationDelegator);
         MybatisProxyPointcutAdvisor mybatisProxyPointcutAdvisor = new MybatisProxyPointcutAdvisor(pointcut,advice);
         return mybatisProxyPointcutAdvisor;
