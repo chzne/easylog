@@ -25,7 +25,7 @@ public class HelloSpringBootApplication {
 2 you can use @Logging annotation to giving a description for your method .
 the description  will appears in your log file to help you distinguish the invocation of a method .
 
-@Logging(value = "the description for your method", include = {Request.CLIENT, Request.HEADER})
+@Logging(value = "the description for method", include = {Request.CLIENT, Request.HEADER})
 @RequestMapping(value = "/helloWord", method = {RequestMethod.POST})
 public Object helloWord(@RequestParam("userId") String userId, @RequestParam("name") String name, HttpServletRequest request)
 

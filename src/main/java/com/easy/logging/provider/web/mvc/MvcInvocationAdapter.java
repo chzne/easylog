@@ -1,10 +1,10 @@
-package com.easy.logging.provider.web;
+package com.easy.logging.provider.web.mvc;
 
 import com.easy.logging.invocation.adapter.InvocationAdapter;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.support.AopUtils;
 
-public class WebInvocationAdapter extends InvocationAdapter {
+public class MvcInvocationAdapter extends InvocationAdapter {
 
     private final MethodInvocation methodInvocation;
     private final Class<?> target;
@@ -14,7 +14,7 @@ public class WebInvocationAdapter extends InvocationAdapter {
         return targetClass;
     }
 
-    public WebInvocationAdapter(MethodInvocation methodInvocation){
+    public MvcInvocationAdapter(MethodInvocation methodInvocation){
         setTarget(methodInvocation.getThis().getClass());
         setMethod(methodInvocation.getMethod());
         setArgurments(methodInvocation.getArguments());

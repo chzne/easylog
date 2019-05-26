@@ -1,8 +1,6 @@
 package com.easy.logging.provider.mybatis;
 
 import com.easy.logging.Advisor;
-import com.easy.logging.provider.web.WebAdvisor;
-import com.easy.logging.provider.web.WebAnnotationPointcut;
 import org.aopalliance.aop.Advice;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
@@ -10,11 +8,11 @@ import org.springframework.aop.support.AbstractPointcutAdvisor;
 public class MybatisProxyPointcutAdvisor extends AbstractPointcutAdvisor implements Advisor {
 
     private final MybatisPackagePointcut pointcut;
-    private final MybatisAdvisor webAdvisor;
+    private final MybatisMethodInterceptor webAdvisor;
 
-    public MybatisProxyPointcutAdvisor(MybatisPackagePointcut pointcut, MybatisAdvisor mybatisAdvisor){
+    public MybatisProxyPointcutAdvisor(MybatisPackagePointcut pointcut, MybatisMethodInterceptor mybatisMethodInterceptor){
         this.pointcut = pointcut;
-        this.webAdvisor = mybatisAdvisor;
+        this.webAdvisor = mybatisMethodInterceptor;
     }
 
     @Override

@@ -4,11 +4,11 @@ import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.easy.logging.TraceIdGenerator;
 import com.easy.logging.Tracer;
-import com.easy.logging.trace.Attachment;
+import com.easy.logging.TraceAttachment;
 
 import java.util.Map;
 
-public class DubboTracer implements Tracer<DubboInvocationAdapter> {
+public class DubboLoggingTracer implements Tracer<DubboInvocationAdapter> {
 
     private TraceIdGenerator traceIdGenerator;
 
@@ -17,24 +17,14 @@ public class DubboTracer implements Tracer<DubboInvocationAdapter> {
     protected String traceParameterName=DUBBO_TRACE_ID_KEY;
 
     @Override
-    public void setIdGenerator(TraceIdGenerator traceIdGenerator) {
-        this.traceIdGenerator= traceIdGenerator;
-    }
-
-    @Override
-    public TraceIdGenerator getIdGenerator() {
-        return traceIdGenerator;
-    }
-
-    @Override
-    public Attachment extract(DubboInvocationAdapter invocation) {
+    public TraceAttachment extract(DubboInvocationAdapter invocation) {
         Map<String, String> map = invocation.getAttachments();
         String traceId = map.get(getTraceParameterName());
         if (StringUtils.isEmpty(traceId)) {
             return null;
         }
-        Attachment attachment = new Attachment(traceId);
-        return attachment;
+        TraceAttachment traceAttachment = new TraceAttachment(traceId);
+        return traceAttachment;
     }
 
     @Override
@@ -52,7 +42,7 @@ public class DubboTracer implements Tracer<DubboInvocationAdapter> {
     }
 
     @Override
-    public void inject(DubboInvocationAdapter invocation, Attachment carrier) {
+    public void inject(DubboInvocationAdapter invocation, TraceAttachment carrier) {
         if(carrier!=null){
             Map<String, String> map = invocation.getAttachments();
             map.put(DUBBO_TRACE_ID_KEY, carrier.getTraceId());

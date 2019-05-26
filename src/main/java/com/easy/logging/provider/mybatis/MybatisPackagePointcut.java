@@ -1,11 +1,10 @@
 package com.easy.logging.provider.mybatis;
 
-import com.easy.logging.invocation.delegator.DefaultInvocationDelegator;
+import com.easy.logging.invocation.proxy.LogInvocationProxy;
 import org.springframework.aop.support.StaticMethodMatcherPointcut;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.util.ClassUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +20,7 @@ public class MybatisPackagePointcut extends StaticMethodMatcherPointcut {
 
     @Override
     public boolean matches(Method method, Class<?> targetClass) {
-        if (targetClass != null && DefaultInvocationDelegator.class.isAssignableFrom(targetClass)) {
+        if (targetClass != null && LogInvocationProxy.class.isAssignableFrom(targetClass)) {
             return false;
         } else {
             Class<?> userClass = ClassUtils.getUserClass(targetClass);

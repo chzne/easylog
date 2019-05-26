@@ -1,38 +1,37 @@
 package com.easy.logging.provider.mybatis;
 
-import com.easy.logging.InvocationDelegator;
-import com.easy.logging.provider.web.WebAdvisor;
-import com.easy.logging.provider.web.WebAnnotationPointcut;
-import com.easy.logging.provider.web.WebProxyPointcutAdvisor;
-import com.easy.logging.spring.annotation.Logging;
+import com.easy.logging.InvocationProxy;
+import com.easy.logging.spring.autoconfigure.EasylogAutoConfiguration;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.Map;
 
 @Configuration
+@ConditionalOnProperty(
+        value = {"easylog.log.mybatis.enabled"},
+        matchIfMissing = true
+)
 @ConditionalOnWebApplication
- public class LogMybatisAutoconfiguration implements ApplicationContextAware {
+@ConditionalOnClass(SqlSessionFactory.class)
+@AutoConfigureAfter({EasylogAutoConfiguration.class})
+ public class MybatisLoggingAutoConfiguration implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    @Bean
-    @ConditionalOnMissingBean
-    public MybatisLogInterceptor mybatisLogInterceptor() {
-        MybatisLogInterceptor mybatisLogInterceptor =   new MybatisLogInterceptor();
-        return mybatisLogInterceptor;
-    }
+
 
     @Bean
     @ConditionalOnMissingBean
@@ -50,13 +49,19 @@ import java.util.Map;
         return mybatisPackagePointcut;
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public MybatisMethodInterceptor mybatisMethodInterceptor(InvocationProxy invocationProxy){
+        return new MybatisMethodInterceptor(invocationProxy);
+    }
+
 
 
     @Bean
     @ConditionalOnMissingBean
-    public MybatisProxyPointcutAdvisor mybatisProxyPointcutAdvisor(InvocationDelegator invocationDelegator, MybatisPackagePointcut pointcut) {
-        MybatisAdvisor advice = new MybatisAdvisor(invocationDelegator);
-        MybatisProxyPointcutAdvisor mybatisProxyPointcutAdvisor = new MybatisProxyPointcutAdvisor(pointcut,advice);
+    public MybatisProxyPointcutAdvisor mybatisProxyPointcutAdvisor(MybatisPackagePointcut pointcut,MybatisMethodInterceptor mybatisMethodInterceptor) {
+
+        MybatisProxyPointcutAdvisor mybatisProxyPointcutAdvisor = new MybatisProxyPointcutAdvisor(pointcut,mybatisMethodInterceptor);
         return mybatisProxyPointcutAdvisor;
     }
 

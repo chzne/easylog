@@ -1,4 +1,4 @@
-package com.easy.logging.provider.web;
+package com.easy.logging.provider.web.http;
 
 import com.easy.logging.Invocation;
 import com.easy.logging.logging.logger.AbstractInvocationLogger;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 @Slf4j
-public class ServletInvocationLogger extends AbstractInvocationLogger<ServletInvocationAdapter> {
+public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainInvocationAdapter> {
     /**
      * The default value prepended to the logging message written <i>before</i> a request is
      * processed.
@@ -259,30 +259,36 @@ public class ServletInvocationLogger extends AbstractInvocationLogger<ServletInv
 
 
     @Override
-    public Message beforeMessage(ServletInvocationAdapter invocation) {
-        String message = createMessage(invocation.getRequest(), this.beforeMessagePrefix, this.beforeMessageSuffix);
+    public Message beforeMessage(FilterChainInvocationAdapter invocation) {
+        String message = createMessage(invocation.getHttpServletRequest(), this.beforeMessagePrefix, this.beforeMessageSuffix);
 
         return new Message("{}",message);
     }
 
     @Override
-    public Message afterMessage(ServletInvocationAdapter invocation, Object result) {
-        String message = createMessage(invocation.getRequest(), this.afterMessagePrefix, this.afterMessageSuffix);
+    public Message afterMessage(FilterChainInvocationAdapter invocation, Object result) {
+        String message = createMessage(invocation.getHttpServletRequest(), this.afterMessagePrefix, this.afterMessageSuffix);
         return new Message("{}",message);
     }
+
 
 
 
     @Override
     public int getPriority(Class<? extends Invocation> invocation) {
-        if(invocation.getName().equalsIgnoreCase(ServletInvocationAdapter.class.getName())){
+        if(invocation.getName().equalsIgnoreCase(HttpInvocationLogger.class.getName())){
             return 8;
         }
         return -1;
     }
 
     @Override
-    public void throwing(ServletInvocationAdapter invocation, Throwable throwable) {
+    public Class<Invocation>[] getSupportedInvocationType() {
+        return new Class[]{FilterChainInvocationAdapter.class};
+    }
+
+    @Override
+    public void throwing(FilterChainInvocationAdapter invocation, Throwable throwable) {
 
     }
 }

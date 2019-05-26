@@ -3,42 +3,58 @@ package com.easy.logging.logging.registry;
 import com.easy.logging.Invocation;
 import com.easy.logging.InvocationLogger;
 import com.easy.logging.LoggerRegistry;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 
-import java.util.LinkedList;
-import java.util.List;
+import javax.annotation.PostConstruct;
+import java.util.*;
 
-public class InvocationLoggerRegistry implements LoggerRegistry {
+public class InvocationLoggerRegistry implements LoggerRegistry, InitializingBean {
 
-    protected List<InvocationLogger> loggerList = new LinkedList<>();
+
+    private final ObjectProvider<InvocationLogger[]> provider;
+
+    protected List<InvocationLogger> loggerList  = new LinkedList<>();
+
+    public InvocationLoggerRegistry(ObjectProvider<InvocationLogger[]> provider) {
+        this.provider = provider;
+    }
+
 
     @Override
-    public InvocationLogger getLoggerWithHighPriority(Class<? extends Invocation> invocation) {
-        InvocationLogger lastLoggerWithHighPriority=null;
-        int priority = 0;
-        for (int i = 0; i < loggerList.size(); i++) {
-            InvocationLogger logger = loggerList.get(i);
-            int loggerPriority = logger.getPriority(invocation);
-            if(lastLoggerWithHighPriority==null){
-                lastLoggerWithHighPriority=logger;
-                priority=loggerPriority;
-            }else{
-                if(priority<loggerPriority){
-                    priority = loggerPriority;
-                    lastLoggerWithHighPriority=logger;
-                }
+    public void register(InvocationLogger logger) {
+
+        loggerList.add(logger);
+    }
+
+    @Override
+    public List<? extends InvocationLogger> getLoggersByType(Class<? extends Invocation> clazz) {
+        List<InvocationLogger> loggerList = new LinkedList<>();
+
+        for (InvocationLogger invocationLogger : loggerList) {
+            
+        }
+
+        if(loggerList==null){
+            return Collections.emptyList();
+        }
+        return loggerList;
+    }
+
+    @Override
+    public List<? extends InvocationLogger> getLoggers() {
+        return loggerList;
+    }
+
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        InvocationLogger[] loggers = provider.getIfAvailable();
+        if(loggers!=null){
+            for (InvocationLogger logger : loggers) {
+                register(logger);
             }
         }
-        return lastLoggerWithHighPriority;
     }
-
-    @Override
-    public void registor(InvocationLogger logger) {
-        if(!loggerList.contains(logger)){
-            loggerList.add(logger);
-        }
-    }
-
-
-
 
 }

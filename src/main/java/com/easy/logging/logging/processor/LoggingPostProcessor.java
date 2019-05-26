@@ -1,40 +1,38 @@
-package com.easy.logging.logging.advice;
+package com.easy.logging.logging.processor;
 
-import com.easy.logging.Advice;
-import com.easy.logging.Invocation;
-import com.easy.logging.InvocationLogger;
-import com.easy.logging.LoggerRegistry;
+import com.easy.logging.*;
+import com.easy.logging.PostProcessor;
 import org.springframework.core.Ordered;
 
 import java.util.List;
 
-public class LoggingAdvice implements Advice, Ordered {
+public class LoggingPostProcessor implements PostProcessor, Ordered {
 
     protected final static String INVOCATION_LOGGER_ATTRIBUTE_NAME="invocation_logger_attribute_name";
 
-    private final LoggerRegistry loggerRegistry;
+    private final LoggerSelector loggerSelector;
 
-    public LoggingAdvice(LoggerRegistry loggerRegistry){
-        this.loggerRegistry = loggerRegistry;
+    public LoggingPostProcessor(LoggerSelector loggerSelector){
+        this.loggerSelector = loggerSelector;
     }
 
     @Override
     public void before(Invocation invocation) {
-        InvocationLogger logger = loggerRegistry.getLoggerWithHighPriority(invocation.getClass());
-        invocation.setAttribute(INVOCATION_LOGGER_ATTRIBUTE_NAME,logger);
-        logger.before(invocation);
+        List<InvocationLogger> loggers = loggerSelector.select(invocation);
+        loggers.forEach(logger->logger.before(invocation));
+
     }
 
     @Override
     public void after(Invocation invocation, Object result) {
-        InvocationLogger logger = (InvocationLogger) invocation.getAttribute(INVOCATION_LOGGER_ATTRIBUTE_NAME);
-        logger.after(invocation,result);
+        List<InvocationLogger> loggers = loggerSelector.select(invocation);
+        loggers.forEach(logger->logger.after(invocation,result));
     }
 
     @Override
     public void throwing(Invocation invocation, Throwable throwable) {
-        InvocationLogger logger = (InvocationLogger) invocation.getAttribute(INVOCATION_LOGGER_ATTRIBUTE_NAME);
-        logger.throwing(invocation,throwable);
+        List<InvocationLogger> loggers = loggerSelector.select(invocation);
+        loggers.forEach(logger->logger.throwing(invocation,throwable));
     }
 
     /**

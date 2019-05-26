@@ -1,80 +1,44 @@
 package com.easy.logging.spring.autoconfigure;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.PatternLayout;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.OutputStreamAppender;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.easy.logging.*;
-import com.easy.logging.invocation.delegator.DefaultInvocationDelegator;
-import com.easy.logging.logging.advice.LoggingAdvice;
+import com.easy.logging.invocation.InterceptorRegistry;
+import com.easy.logging.InvocationInterceptor;
+import com.easy.logging.InvocationProxy;
+import com.easy.logging.PostProcessor;
+import com.easy.logging.invocation.advice.OrderedCompositePostProcessor;
+import com.easy.logging.invocation.proxy.LogInvocationProxy;
+import com.easy.logging.invocation.interceptor.StageInterceptorRegistry;
 import com.easy.logging.logging.logger.GenericInvocationLogger;
+import com.easy.logging.logging.processor.LoggingPostProcessor;
 import com.easy.logging.logging.registry.InvocationLoggerRegistry;
-import com.easy.logging.provider.logback.TraceEnsureExceptionHandling;
-import com.easy.logging.spring.annotation.EasyLogWebMvcConfiguration;
-import com.easy.logging.trace.Trace;
-import com.easy.logging.trace.advice.TraceAdvice;
+import com.easy.logging.logging.selector.StaticTypeLoggerSelector;
+
+import com.easy.logging.session.DistributedSessionFactory;
+import com.easy.logging.trace.registry.TypeTracerRegistra;
+import com.easy.logging.trace.advice.TracePostProcessor;
 import com.easy.logging.trace.generator.IncrementTraceIdGenerator;
-import com.easy.logging.trace.registry.SimpleTraceRegistry;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.LoggerFactory;
+import com.easy.logging.trace.registry.SimpleTracerRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
-import java.util.Iterator;
 
 
 @EnableConfigurationProperties(EasylogProperties.class)
 @Configuration
-@ConditionalOnBean(EasyLogWebMvcConfiguration.class)
+@ConditionalOnWebApplication
 public class EasylogAutoConfiguration  implements ApplicationContextAware {
 
 
 
     private ApplicationContext applicationContext;
-
-    public EasylogAutoConfiguration(ApplicationContext applicationContext,SqlSessionFactory sqlSessionFactory){
-        this.applicationContext=applicationContext;
-        logbackTraceInjection();
-    }
-
-
-    public void logbackTraceInjection(){
-        ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
-        if (iLoggerFactory instanceof LoggerContext) {
-            LoggerContext loggerContext = (LoggerContext) iLoggerFactory;
-            Logger logger = loggerContext.getLogger("ROOT");
-            Iterator<Appender<ILoggingEvent>> appenders = logger.iteratorForAppenders();
-            while (appenders.hasNext()) {
-                Appender<ILoggingEvent> appender =  appenders.next();
-                if(OutputStreamAppender.class.isAssignableFrom(appender.getClass())){
-                    LayoutWrappingEncoder encoder = (LayoutWrappingEncoder) ((OutputStreamAppender<ILoggingEvent>) appender).getEncoder();
-                    PatternLayout layout = (PatternLayout) encoder.getLayout();
-                    String pattern = layout.getPattern();
-                    layout.setPattern("%X{"+ Trace.DEFAULT_TRACE_MDC_PARAMETER_NAME+"}"+pattern);
-                    layout.stop();
-                    layout.setPostCompileProcessor(new TraceEnsureExceptionHandling());
-                    layout.start();
-                }
-            }
-        }
-    }
-
     @Bean
     @ConditionalOnMissingBean
     public TraceIdGenerator traceIdGenerator() {
@@ -93,65 +57,99 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
 
     @Bean
     @ConditionalOnMissingBean
-    public LoggerRegistry loggerRegistry(ObjectProvider<InvocationLogger[]> invocationLoggers) {
-        InvocationLoggerRegistry registry = new InvocationLoggerRegistry();
-        InvocationLogger[] loggers = invocationLoggers.getIfAvailable();
-        Arrays.stream(loggers).forEach(logger ->{
-            registry.registor(logger);
-        });
+    public LoggerRegistry loggerRegistry(ObjectProvider<InvocationLogger[]> provider) {
+        InvocationLoggerRegistry registry = new InvocationLoggerRegistry(provider);
+        return registry;
+    }
+
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public TracerRegistry tracerRegistry() {
+        TracerRegistry registry =  new SimpleTracerRegistry();
         return registry;
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public TracerRegistry tracerRegistry(ObjectProvider<Tracer[]> objectProviderTracers) {
-        TracerRegistry registry =  new SimpleTraceRegistry();
-        Tracer[] tracers = objectProviderTracers.getIfAvailable();
-        Arrays.stream(tracers).forEach(tracer ->{
-            Class<? extends Tracer> clazz = tracer.getClass();
-            Type[] types = clazz.getGenericInterfaces();
-            Type type = types[0];
-            if(ParameterizedType.class.isAssignableFrom(type.getClass())){
-                ParameterizedType parameterizedType = (ParameterizedType) type;
-                Type actualType = parameterizedType.getActualTypeArguments()[0];
-                if(TypeVariable.class.isAssignableFrom(actualType.getClass())){
-                    TypeVariable typeVariable = (TypeVariable) actualType;
-                    Class<? extends Invocation> invocationType = (Class<? extends Invocation>) typeVariable.getBounds()[0];
-                    registry.registor(invocationType,tracer);
-                }else{
-                    Class<? extends Invocation> invocationType = (Class<? extends Invocation>) actualType;
-                    registry.registor(invocationType,tracer);
-                }
-            }
-
-        });
-        return registry;
+    public TracerRegistra tracerRegistra(TracerRegistry tracerRegistry,ObjectProvider<Tracer[]> provider){
+        TracerRegistra tracerRegistra = new TypeTracerRegistra();
+        Tracer[] tracers;
+        if((tracers = provider.getIfAvailable())!=null){
+            provider.getIfAvailable();
+            Arrays.stream(tracers).forEach(tracer ->tracerRegistra.addTracer(tracerRegistry,tracer));
+        }
+        return tracerRegistra;
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LoggingAdvice loggingAdvice(@Autowired LoggerRegistry loggerRegistry) {
-        return new LoggingAdvice(loggerRegistry);
+    public LoggingPostProcessor loggingPostProcessor(ObjectProvider<LoggerSelector> objectProvider) {
+        return new LoggingPostProcessor(objectProvider.getIfAvailable());
+    }
+
+
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public StaticTypeLoggerSelector singleLoggerSelector(LoggerRegistry registry){
+
+        StaticTypeLoggerSelector selector = new StaticTypeLoggerSelector(registry);
+        return selector;
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public TraceAdvice traceAdvice(@Autowired TracerRegistry tracerRegistry) {
-        TraceAdvice traceAdvice = new TraceAdvice(tracerRegistry);
-        return traceAdvice;
+    public SessionFactory sessionFactory(){
+        DistributedSessionFactory sessionFactory = new DistributedSessionFactory();
+        return sessionFactory;
+
     }
+    @Bean
+    @ConditionalOnMissingBean
+    public TracePostProcessor tracePostProcessor(TracerRegistry tracerRegistry,TraceIdGenerator traceIdGenerator){
+        TracePostProcessor postProcessor = new TracePostProcessor(tracerRegistry,traceIdGenerator);
+        return postProcessor;
+    }
+
+
+
 
     @Bean
     @ConditionalOnMissingBean
-    public InvocationDelegator invocationDelegator(ObjectProvider<Advice[]> objectProviderAdvices) {
-        DefaultInvocationDelegator delegator = new DefaultInvocationDelegator(objectProviderAdvices.getIfAvailable());
-        return delegator;
+    public InterceptorRegistry interceptorRegistry(ObjectProvider<InvocationInterceptor[]> provider){
+        InterceptorRegistry interceptorRegistry = new StageInterceptorRegistry();
+        InvocationInterceptor[] invocationIntercepts = provider.getIfAvailable();
+        if(invocationIntercepts==null){
+            return interceptorRegistry;
+        }
+        Arrays.stream(invocationIntercepts).forEach(ii ->interceptorRegistry.register(ii));
+        return interceptorRegistry;
     }
+
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public InvocationProxy invocationProxy(SessionFactory sessionFactory,ObjectProvider<PostProcessor[]> provider,
+                                           InterceptorRegistry interceptorRegistry) {
+
+        OrderedCompositePostProcessor postProcessor = new OrderedCompositePostProcessor(provider);
+
+        LogInvocationProxy proxy = new LogInvocationProxy(sessionFactory,postProcessor,interceptorRegistry);
+        return proxy;
+    }
+
+
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
+
+
 
 
 }

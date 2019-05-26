@@ -10,6 +10,6 @@ public class EasylogAspectRegistrar implements ImportBeanDefinitionRegistrar {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
-        //registry.registerBeanDefinition();
+
     }
 }

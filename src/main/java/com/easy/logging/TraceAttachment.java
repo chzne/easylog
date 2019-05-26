@@ -1,10 +1,10 @@
-package com.easy.logging.trace;
+package com.easy.logging;
 
-public class Attachment {
+public class TraceAttachment {
 
     protected String traceId;
 
-    public Attachment(String traceId) {
+    public TraceAttachment(String traceId) {
         this.traceId = traceId;
     }
 

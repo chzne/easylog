@@ -1,6 +1,7 @@
 package com.easy.logging.logging.logger;
 
 import com.easy.logging.Invocation;
+import com.easy.logging.InvocationLogger;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,7 +25,6 @@ public class GenericInvocationLogger<T extends Invocation> extends AbstractInvoc
 
     public void setBeforePrefix(String prefix){
         this.beforePrefix= prefix;
-
     }
 
     public void setAfterPrefix(String prefix){
@@ -65,11 +65,19 @@ public class GenericInvocationLogger<T extends Invocation> extends AbstractInvoc
     }
 
 
+
+
     @Override
     public int getPriority(Class<? extends Invocation> invocation) {
 
         return 0;
     }
+
+    @Override
+    public Class<Invocation>[] getSupportedInvocationType() {
+        return new Class[]{Invocation.class};
+    }
+
 
     @Override
     public void throwing(T invocation, Throwable throwable) {

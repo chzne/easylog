@@ -18,11 +18,6 @@ public class ExceptionHolder {
     }
 
 
-
-
-
-
-
     public void setException(Throwable e) {
         this.throwable= e;
     }
@@ -32,9 +27,4 @@ public class ExceptionHolder {
         return this.throwable==null?false:true;
     }
 
-
-
-    public void closeRequest() {
-
-    }
 }

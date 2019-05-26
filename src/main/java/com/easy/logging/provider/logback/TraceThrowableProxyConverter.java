@@ -3,7 +3,9 @@ package com.easy.logging.provider.logback;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.easy.logging.trace.Trace;
+import com.easy.logging.Session;
+import com.easy.logging.SessionHolder;
+import com.easy.logging.Trace;
 
 public class TraceThrowableProxyConverter extends ThrowableProxyConverter {
 
@@ -11,9 +13,16 @@ public class TraceThrowableProxyConverter extends ThrowableProxyConverter {
     public String convert(ILoggingEvent event) {
         if (event.getLevel().equals(Level.ERROR)) {
             String message = super.convert(event);
-            Trace trace = Trace.getConcurrentTrace();
-            String msgWithTraceId = message.replaceAll("\n", "\n" + trace.getTraceId());
-            return msgWithTraceId;
+            Session session = SessionHolder.getSession();
+            Trace trace;
+            if(session!=null){
+                trace  = session.getTrace();
+                if(trace!=null){
+                    String msgWithTraceId = message.replaceAll("\n", "\n" + trace.getTraceId());
+                    return msgWithTraceId;
+                }
+            }
+
         }
         return super.convert(event);
     }

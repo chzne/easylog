@@ -3,7 +3,6 @@ package com.easy.logging.provider.logback;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.spi.FilterReply;
-import com.easy.logging.trace.Trace;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayOutputStream;
@@ -27,7 +26,7 @@ public class MemoryConsoleAppender extends OutputStreamAppender<LoggingEvent> {
     @Override
     public OutputStream getOutputStream() {
 
-        String traceId = Trace.getConcurrentTrace().getTraceId();
+        String traceId = "";
         if (traceId == null) {
             traceId="empty";
 

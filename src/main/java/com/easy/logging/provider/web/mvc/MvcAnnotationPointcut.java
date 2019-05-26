@@ -1,6 +1,6 @@
-package com.easy.logging.provider.web;
+package com.easy.logging.provider.web.mvc;
 
-import com.easy.logging.invocation.delegator.DefaultInvocationDelegator;
+import com.easy.logging.invocation.proxy.LogInvocationProxy;
 import org.springframework.aop.support.StaticMethodMatcherPointcut;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.util.ClassUtils;
@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
-public class WebAnnotationPointcut extends StaticMethodMatcherPointcut {
+public class MvcAnnotationPointcut extends StaticMethodMatcherPointcut {
 
     protected List<Class<? extends Annotation>> targetAnnotations = new LinkedList<>();
 
@@ -27,7 +27,7 @@ public class WebAnnotationPointcut extends StaticMethodMatcherPointcut {
 
     @Override
     public boolean matches(Method method, Class<?> targetClass) {
-        if (targetClass != null && DefaultInvocationDelegator.class.isAssignableFrom(targetClass)) {
+        if (targetClass != null && LogInvocationProxy.class.isAssignableFrom(targetClass)) {
             return false;
         } else {
             Class<?> userClass = ClassUtils.getUserClass(targetClass);

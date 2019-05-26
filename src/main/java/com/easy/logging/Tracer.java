@@ -1,7 +1,5 @@
 package com.easy.logging;
 
-import com.easy.logging.trace.Attachment;
-
 /**
  *
  * there are two functions for tracing:
@@ -11,15 +9,11 @@ import com.easy.logging.trace.Attachment;
  * */
 public interface Tracer<T extends Invocation> {
 
-    public void setIdGenerator(TraceIdGenerator traceIdGenerator);
-
-    public TraceIdGenerator getIdGenerator();
-
     public boolean canExtract(T invocation);
 
-    public Attachment extract(T invocation);
+    public TraceAttachment extract(T invocation);
 
     public boolean canInject(T invocation);
 
-    public void inject(T invocation, Attachment attachment);
+    public void inject(T invocation, TraceAttachment traceAttachment);
 }

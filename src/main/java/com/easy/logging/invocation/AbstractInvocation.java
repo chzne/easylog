@@ -1,9 +1,11 @@
 package com.easy.logging.invocation;
 
 import com.easy.logging.Invocation;
+import com.easy.logging.InvocationLogger;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 
 public abstract class AbstractInvocation implements Invocation {
 
@@ -28,7 +30,6 @@ public abstract class AbstractInvocation implements Invocation {
     protected void setArgurments(Object[] argurments) {
         this.argurments = argurments;
     }
-
 
     @Override
     public Class<?> getTarget() {
