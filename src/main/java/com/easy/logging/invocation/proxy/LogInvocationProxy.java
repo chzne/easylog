@@ -62,7 +62,7 @@ public class LogInvocationProxy implements InvocationProxy , ApplicationContextA
     }
 
     @Override
-    public Object delegating(InvocationAdapter invocation) {
+    public Object delegating(InvocationAdapter invocation) throws Throwable {
         assert invocation!=null;
         Session session = SessionHolder.getSession();
         boolean isLoggingSystemException = false;
@@ -93,6 +93,7 @@ public class LogInvocationProxy implements InvocationProxy , ApplicationContextA
                    postProcessor.throwing(invocation,throwable);
                }
            }
+           throw throwable;
         } finally {
             if(!isLoggingSystemException){
                 if(!throughException){

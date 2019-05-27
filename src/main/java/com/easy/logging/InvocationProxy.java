@@ -10,7 +10,7 @@ import com.easy.logging.invocation.adapter.InvocationAdapter;
  * */
 public interface InvocationProxy {
 
-    public Object delegating(InvocationAdapter invocation);
+    public Object delegating(InvocationAdapter invocation) throws Throwable;
 
     public void addSessionListener(SessionListener sessionListener);
 }

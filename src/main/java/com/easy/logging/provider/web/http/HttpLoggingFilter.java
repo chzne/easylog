@@ -30,8 +30,10 @@ public class HttpLoggingFilter extends GenericFilterBean implements Advisor, Inv
             invocationProxy.delegating(filterChainInvocationAdapter);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-        }
+        } catch (Throwable throwable) {
+            log.error("",throwable);
 
+        }
 
 
     }
