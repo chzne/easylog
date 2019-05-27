@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -29,9 +30,19 @@ import java.util.Map;
 @AutoConfigureAfter({EasylogAutoConfiguration.class})
  public class MybatisLoggingAutoConfiguration implements ApplicationContextAware {
 
+    private final SqlSessionFactory sqlSessionFactory;
     private ApplicationContext applicationContext;
 
+    public MybatisLoggingAutoConfiguration(SqlSessionFactory sqlSessionFactory){
+        this.sqlSessionFactory = sqlSessionFactory;
+    }
 
+    @PostConstruct
+    public void addMybatisLoggingInterceptor() {
+        MybatisLoggingInterceptor interceptor = new MybatisLoggingInterceptor();
+        sqlSessionFactory.getConfiguration().addInterceptor(interceptor);
+
+    }
 
     @Bean
     @ConditionalOnMissingBean
