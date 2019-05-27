@@ -30,6 +30,7 @@ public class MvcLoggingAutoConfiguration {
         pointcut.addTargetAnnotation(Repository.class);
         pointcut.addTargetAnnotation(Logging.class);
         pointcut.addMethodAnnotation(Logging.class);
+
         return pointcut;
     }
 

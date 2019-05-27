@@ -2,14 +2,14 @@ package com.easy.logging.trace.registry;
 
 import com.easy.logging.Invocation;
 import com.easy.logging.Tracer;
-import com.easy.logging.TracerRegistra;
+import com.easy.logging.TracerRegistrar;
 import com.easy.logging.TracerRegistry;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
-public class TypeTracerRegistra implements TracerRegistra {
+public class TypeTracerRegistrar implements TracerRegistrar {
 
     @Override
     public void addTracer(TracerRegistry registry,Tracer tracer) {

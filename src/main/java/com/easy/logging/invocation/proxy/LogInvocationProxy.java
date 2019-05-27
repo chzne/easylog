@@ -93,6 +93,9 @@ public class LogInvocationProxy implements InvocationProxy , ApplicationContextA
                    postProcessor.throwing(invocation,throwable);
                }
            }
+            if(session!=null && session.isHeadInvocation(invocation)){
+                log.error("",throwable);
+            }
            throw throwable;
         } finally {
             if(!isLoggingSystemException){

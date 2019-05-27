@@ -14,7 +14,7 @@ import com.easy.logging.logging.registry.InvocationLoggerRegistry;
 import com.easy.logging.logging.selector.StaticTypeLoggerSelector;
 
 import com.easy.logging.session.DistributedSessionFactory;
-import com.easy.logging.trace.registry.TypeTracerRegistra;
+import com.easy.logging.trace.registry.TypeTracerRegistrar;
 import com.easy.logging.trace.advice.TracePostProcessor;
 import com.easy.logging.trace.generator.IncrementTraceIdGenerator;
 import com.easy.logging.trace.registry.SimpleTracerRegistry;
@@ -73,14 +73,14 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
 
     @Bean
     @ConditionalOnMissingBean
-    public TracerRegistra tracerRegistra(TracerRegistry tracerRegistry,ObjectProvider<Tracer[]> provider){
-        TracerRegistra tracerRegistra = new TypeTracerRegistra();
+    public TracerRegistrar tracerRegistra(TracerRegistry tracerRegistry, ObjectProvider<Tracer[]> provider){
+        TracerRegistrar tracerRegistrar = new TypeTracerRegistrar();
         Tracer[] tracers;
         if((tracers = provider.getIfAvailable())!=null){
             provider.getIfAvailable();
-            Arrays.stream(tracers).forEach(tracer ->tracerRegistra.addTracer(tracerRegistry,tracer));
+            Arrays.stream(tracers).forEach(tracer -> tracerRegistrar.addTracer(tracerRegistry,tracer));
         }
-        return tracerRegistra;
+        return tracerRegistrar;
     }
 
     @Bean

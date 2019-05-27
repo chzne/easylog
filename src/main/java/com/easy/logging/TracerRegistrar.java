@@ -1,6 +1,6 @@
 package com.easy.logging;
 
-public interface TracerRegistra {
+public interface TracerRegistrar {
 
     public void addTracer(TracerRegistry registry,Tracer tracer);
 }

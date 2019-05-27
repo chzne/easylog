@@ -54,6 +54,8 @@ public abstract class AbstractInvocation implements Invocation {
             Object object = doInvoke();
             return object;
 
+        }catch (Throwable throwable){
+            throw throwable;
         }finally {
             endTime=System.currentTimeMillis();
         }
