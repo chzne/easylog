@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.easy.logging.Session;
-import com.easy.logging.SessionHolder;
+import com.easy.logging.session.SessionHolder;
 import com.easy.logging.Trace;
 
 public class TraceThrowableProxyConverter extends ThrowableProxyConverter {

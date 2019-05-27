@@ -5,7 +5,7 @@ import com.easy.logging.InvocationProxy;
 import com.easy.logging.spring.annotation.InvocationProxyAware;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.GenericFilterBean;
-import sun.reflect.misc.MethodUtil;
+
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
@@ -24,7 +24,8 @@ public class HttpLoggingFilter extends GenericFilterBean implements Advisor, Inv
         Class<? extends HttpLoggingFilter> target = this.getClass();
         Class[] args = new Class[]{ServletRequest.class,ServletResponse.class,FilterChain.class};
         try {
-            Method method = MethodUtil.getMethod(target, "doFilter", args);
+
+            Method method = target.getMethod("doFilter", args);
             FilterChainInvocationAdapter filterChainInvocationAdapter = new FilterChainInvocationAdapter(target,method,(HttpServletRequest)servletRequest,(HttpServletResponse)servletResponse,filterChain );
             invocationProxy.delegating(filterChainInvocationAdapter);
         } catch (NoSuchMethodException e) {

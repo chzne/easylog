@@ -3,7 +3,7 @@ package com.easy.logging.trace.advice;
 import com.easy.logging.*;
 import com.easy.logging.PostProcessor;
 import com.easy.logging.session.SessionDestroyedEvent;
-import com.easy.logging.SessionHolder;
+import com.easy.logging.session.SessionHolder;
 import com.easy.logging.session.SessionStartedEvent;
 import com.easy.logging.TraceAttachment;
 import com.easy.logging.Trace;

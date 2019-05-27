@@ -8,7 +8,7 @@ import com.easy.logging.invocation.adapter.InvocationAdapter;
 import com.easy.logging.invocation.advice.OrderedCompositePostProcessor;
 import com.easy.logging.SessionFactory;
 import com.easy.logging.session.SessionDestroyedEvent;
-import com.easy.logging.SessionHolder;
+import com.easy.logging.session.SessionHolder;
 import com.easy.logging.session.SessionStartedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -112,9 +112,6 @@ public class LogInvocationProxy implements InvocationProxy , ApplicationContextA
             }
         }
         return result;
-
-
-
     }
 
 
