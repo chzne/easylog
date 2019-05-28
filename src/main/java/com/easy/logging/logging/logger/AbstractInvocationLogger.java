@@ -2,94 +2,97 @@ package com.easy.logging.logging.logger;
 
 import com.easy.logging.InvocationLogger;
 import com.easy.logging.Invocation;
+import com.easy.logging.Session;
+import com.easy.logging.Trace;
+import com.easy.logging.logging.config.InvocationLoggingConfig;
+import com.easy.logging.session.SessionHolder;
 import com.easy.logging.spring.annotation.Logging;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+@Data
 public abstract class AbstractInvocationLogger<T extends Invocation> implements InvocationLogger<T> {
 
-    protected boolean includeLoggingAnnotationValue = true;
 
-    protected boolean includeElapsedTime = true;
+    private final InvocationLoggingConfig config;
 
-    private String elaspedTimeName="cost";
-
-
-    public void setIncludeLoggingAnnotationValue(boolean include){
-
-        includeLoggingAnnotationValue = include;
+    public AbstractInvocationLogger(InvocationLoggingConfig config){
+        this.config = config;
     }
 
-    public void setElaspedTimeName(String elaspedTimeName){
+    public abstract Message getArgurmentsMessage(T invocation);
 
-        this.elaspedTimeName = elaspedTimeName;
-    }
-
-    public String getElaspedTimeName(){
-
-       return elaspedTimeName;
-    }
-
-    public void setIncludeElapsedTime(boolean include){
-
-        includeElapsedTime = include;
-    }
-
-    public boolean isIncludeElapsedTime(){
-
-        return includeElapsedTime;
-    }
+    public abstract Message getResultMessage(T invocation,Object result);
 
 
 
-    public abstract Message beforeMessage(T invocation);
-
-    public abstract Message afterMessage(T invocation,Object result);
 
     @Override
     public final void before(T invocation) {
-        Message message = beforeMessage(invocation);
-        delegate(invocation,message.getFormat(),message.getMessage(),"");
+        if(config.isIncludeArgurments()){
+            Message message = getArgurmentsMessage(invocation);
+            doLogging(invocation,config.getBeforePrefix()+message.getFormat()+config.getBeforeSuffix(),message.getMessage(),"");
+        }
+    }
+
+    protected String getElapsedTimeMessage(T invocation){
+        long start = invocation.getStartTime();
+        long end =   invocation.getEndTime();
+        long duration = end - start;
+        String elapsedTimeMessage = config.getElapsedTimePrefix() + " " + duration + "ms" + config.getElapsedTimeSuffix();
+        return elapsedTimeMessage;
     }
 
     @Override
     public final void after(T invocation, Object result) {
-        Message message = afterMessage(invocation,result);
-        String elapsedTime ="";
-        if(isIncludeElapsedTime()){
-            long start = (long) invocation.getStartTime();
-            long end = (long) invocation.getEndTime();
-            long duration = end - start;
-            elapsedTime="["+getElaspedTimeName()+" "+duration+"ms]";
+        if(config.isIncludeResult()){
+            Message message = getResultMessage(invocation,result);
+            String elapsedTimeMessage ="";
+            if(config.isIncludeElapsedTime()){
+                elapsedTimeMessage = getElapsedTimeMessage(invocation);
+            }
+            doLogging(invocation,config.getAfterPrefix()+message.getFormat()+config.getAfterSuffix(),message.getMessage(),elapsedTimeMessage);
+        }
+    }
+
+    @Override
+    public final void throwing(T invocation, Throwable throwable) {
+
+        if(config.isIncludeException()){
+
+            String elapsedTimeMessage ="";
+            if(config.isIncludeElapsedTime()){
+                elapsedTimeMessage = getElapsedTimeMessage(invocation);
+            }
+
+            if(throwable instanceof Exception){
+                Exception exception = (Exception) throwable;
+                doLogging(invocation,config.getExceptionPrefix(),"","");
+                doLogging(invocation,config.getExceptionClassPrefix()+"{}",exception.getClass(),"");
+                doLogging(invocation,config.getExceptionMessagePrefix()+"{}",exception.getMessage(),"");
+                doLogging(invocation,config.getExceptionLocationPrefix()+"{}",throwable.getStackTrace()[0].toString(),elapsedTimeMessage);
+            }
+
+
+
         }
 
-        delegate(invocation,message.getFormat(),message.getMessage(),elapsedTime);
-
     }
-
-    public boolean getIncludeLoggingAnnotationValue(){
-
-        return includeLoggingAnnotationValue ;
-
-    }
-
-
 
     protected Logger getLogger(Invocation invocation){
         Logger logger = LoggerFactory.getLogger(invocation.getTarget());
         return logger;
     }
 
-    protected void delegate(T invocation,String format,Object args,String append){
+    protected void doLogging(T invocation,String format,Object args,String append){
 
         Logger log = getLogger(invocation);
-        if(invocation.getMethod()!=null){
+        if(invocation.getMethod()!=null && config.isIncludeLoggingAnnotationValue()){
             Logging logging= invocation.getMethod().getAnnotation(Logging.class);
             if(logging!=null && logging.value()!=null ){
                 format=logging.value()+" "+format;
             }
         }
-
         if(args!=null && args.getClass().isArray()){
             Object[]  message = (Object[]) args;
             int number =message.length;

@@ -6,8 +6,10 @@ import com.easy.logging.InvocationInterceptor;
 import com.easy.logging.InvocationProxy;
 import com.easy.logging.PostProcessor;
 import com.easy.logging.invocation.advice.OrderedCompositePostProcessor;
+import com.easy.logging.invocation.interceptor.exception.PropagatingExceptionInterceptor;
 import com.easy.logging.invocation.proxy.LogInvocationProxy;
 import com.easy.logging.invocation.interceptor.StageInterceptorRegistry;
+import com.easy.logging.logging.config.InvocationLoggingConfig;
 import com.easy.logging.logging.logger.GenericInvocationLogger;
 import com.easy.logging.logging.processor.LoggingPostProcessor;
 import com.easy.logging.logging.registry.InvocationLoggerRegistry;
@@ -45,14 +47,31 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
         return new IncrementTraceIdGenerator();
     }
 
+
     @Bean
     @ConditionalOnMissingBean
-    public GenericInvocationLogger genericInvocationLogger(){
-        GenericInvocationLogger genericInvocationLogger = new GenericInvocationLogger();
-        genericInvocationLogger.setBeforePrefix("开始:");
-        genericInvocationLogger.setAfterPrefix("结束:");
-        genericInvocationLogger.setElaspedTimeName(" 耗时:");
-        return genericInvocationLogger;
+    public InvocationLoggingConfig commonInvocationLoggingConfig(){
+        InvocationLoggingConfig config = new InvocationLoggingConfig();
+        config.setIncludeArgurments(true);
+        config.setIncludeResult(true);
+        config.setIncludeException(true);
+        config.setIncludeElapsedTime(true);
+        config.setBeforePrefix("【调用方法】");
+        config.setAfterPrefix("【返回结果】");
+        config.setElapsedTimePrefix(" 【耗时:");
+        config.setElapsedTimeSuffix("】");
+        config.setExceptionPrefix("【发生异常】");
+        config.setExceptionClassPrefix("【异常类】");
+        config.setExceptionMessagePrefix("【异常消息】");
+        config.setExceptionLocationPrefix("【异常位置】");
+        return config;
+    }
+    @Bean
+    @ConditionalOnMissingBean
+    public GenericInvocationLogger genericInvocationLogger(InvocationLoggingConfig commonInvocationLoggingConfig){
+        GenericInvocationLogger logger = new GenericInvocationLogger(commonInvocationLoggingConfig);
+
+        return logger;
     }
 
     @Bean
@@ -73,7 +92,7 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
 
     @Bean
     @ConditionalOnMissingBean
-    public TracerRegistrar tracerRegistra(TracerRegistry tracerRegistry, ObjectProvider<Tracer[]> provider){
+    public TracerRegistrar tracerRegistrar(TracerRegistry tracerRegistry, ObjectProvider<Tracer[]> provider){
         TracerRegistrar tracerRegistrar = new TypeTracerRegistrar();
         Tracer[] tracers;
         if((tracers = provider.getIfAvailable())!=null){
@@ -94,7 +113,7 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
 
     @Bean
     @ConditionalOnMissingBean
-    public StaticTypeLoggerSelector singleLoggerSelector(LoggerRegistry registry){
+    public StaticTypeLoggerSelector staticTypeLoggerSelector(LoggerRegistry registry){
 
         StaticTypeLoggerSelector selector = new StaticTypeLoggerSelector(registry);
         return selector;
@@ -115,7 +134,12 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
     }
 
 
-
+    @Bean
+    @ConditionalOnMissingBean
+    public PropagatingExceptionInterceptor propagatingExceptionInterceptor(){
+        PropagatingExceptionInterceptor interceptor = new PropagatingExceptionInterceptor();
+        return interceptor;
+    }
 
     @Bean
     @ConditionalOnMissingBean

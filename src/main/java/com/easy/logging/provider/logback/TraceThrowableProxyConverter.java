@@ -23,7 +23,7 @@ public class TraceThrowableProxyConverter extends ThrowableProxyConverter {
                 trace  = session.getTrace();
                 if(trace!=null){
                     String msgWithTraceId = msg.replaceAll("\n", "\n" + trace.getTraceId());
-                    return msgWithTraceId;
+                    return trace.getTraceId()+" "+msgWithTraceId;
                 }
             }
 

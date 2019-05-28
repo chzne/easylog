@@ -1,6 +1,7 @@
 package com.easy.logging.provider.dubbo;
 
 import com.easy.logging.InvocationProxy;
+import com.easy.logging.logging.config.InvocationLoggingConfig;
 import com.easy.logging.spring.autoconfigure.EasylogAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,6 +31,13 @@ public class DubboLoggingAutoConfiguration {
     public DubboLoggingTracer dubboTracer(){
         DubboLoggingTracer dubboLoggingTracer = new DubboLoggingTracer();
         return dubboLoggingTracer;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DubboInvocationLogger dubboInvocationLogger(InvocationLoggingConfig commonInvocationLoggingConfig){
+        DubboInvocationLogger logger = new DubboInvocationLogger(commonInvocationLoggingConfig);
+        return logger;
     }
 
 

@@ -1,6 +1,8 @@
 package com.easy.logging.provider.web.http;
 
+import com.easy.logging.logging.config.InvocationLoggingConfig;
 import com.easy.logging.spring.autoconfigure.EasylogAutoConfiguration;
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,9 +16,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @AutoConfigureAfter(EasylogAutoConfiguration.class)
 public class HttpLoggingAutoConfiguration {
 
-
-
-
     @Bean
     @ConditionalOnMissingBean
     public HttpLoggingTracer httpLoggingTracer(){
@@ -25,18 +24,22 @@ public class HttpLoggingAutoConfiguration {
         return loggingTracer;
     }
 
+
+
     @Bean
     @ConditionalOnMissingBean
-    public HttpInvocationLogger httpInvocationLogger(){
-        HttpInvocationLogger logger = new HttpInvocationLogger();
+    public HttpInvocationLogger httpInvocationLogger(InvocationLoggingConfig commonInvocationLoggingConfig){
+        InvocationLoggingConfig config = new InvocationLoggingConfig();
+        BeanUtils.copyProperties(commonInvocationLoggingConfig,config);
+        config.setBeforePrefix("【请求地址】");
+        config.setAfterPrefix("【请求结束】");
+        HttpInvocationLogger logger = new HttpInvocationLogger(config);
         logger.setIncludeQueryString(true);
-        logger.setIncludePayload(false);
+        logger.setIncludePayload(true);
         logger.setIncludeHeaders(false);
         logger.setIncludeClientInfo(false);
         logger.setMaxPayloadLength(10000);
-        logger.setBeforeMessagePrefix("HTTP 开始: ");
-        logger.setAfterMessagePrefix("HTTP 结束: ");
-        logger.setElaspedTimeName(" 耗时:");
+
         return logger;
     }
 

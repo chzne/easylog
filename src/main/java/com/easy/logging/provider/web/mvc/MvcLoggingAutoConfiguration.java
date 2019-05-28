@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,11 +27,9 @@ public class MvcLoggingAutoConfiguration {
     protected MvcAnnotationPointcut mvcAnnotationPointcut(){
         MvcAnnotationPointcut pointcut = new MvcAnnotationPointcut();
         pointcut.addTargetAnnotation(RestController.class);
+        pointcut.addTargetAnnotation(Controller.class);
         pointcut.addTargetAnnotation(Service.class);
         pointcut.addTargetAnnotation(Repository.class);
-        pointcut.addTargetAnnotation(Logging.class);
-        pointcut.addMethodAnnotation(Logging.class);
-
         return pointcut;
     }
 

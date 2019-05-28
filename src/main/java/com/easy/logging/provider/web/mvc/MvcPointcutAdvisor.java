@@ -17,7 +17,6 @@ public class MvcPointcutAdvisor extends AbstractPointcutAdvisor implements Advis
 
     @Override
     public Pointcut getPointcut() {
-
         return pointcut;
     }
 

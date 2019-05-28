@@ -10,12 +10,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface Logging {
 
-
-    @AliasFor("prefix")
+    @AliasFor("remark")
     String value() default "";
 
     @AliasFor("value")
-    String prefix() default "";
+    String remark() default "";
     /**只对Controller有效 输出HTTP信息*/
     Request[] include() default {};
 
