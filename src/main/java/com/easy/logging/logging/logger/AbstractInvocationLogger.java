@@ -48,7 +48,7 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
     public final void before(T invocation) {
         if(config.isIncludeArgurments()){
             Message message=new Message("","");
-            if(isExcludeParamInLoggingAnnotation(invocation,Exclude.ARGUMENTS)){
+            if(!isExcludeParamInLoggingAnnotation(invocation,Exclude.ARGUMENTS)){
                  message = getArgurmentsMessage(invocation);
             }
             doLogging(invocation,config.getBeforePrefix()+message.getFormat()+config.getBeforeSuffix(),message.getMessage(),"");
@@ -67,7 +67,7 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
     public final void after(T invocation, Object result) {
         if(config.isIncludeResult()){
             Message message=new Message("","");
-            if(isExcludeParamInLoggingAnnotation(invocation,Exclude.RESULT)){
+            if(!isExcludeParamInLoggingAnnotation(invocation,Exclude.RESULT)){
                  message = getResultMessage(invocation,result);
             }
 
