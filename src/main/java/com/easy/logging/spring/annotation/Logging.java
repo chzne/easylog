@@ -13,6 +13,11 @@ public @interface Logging {
     @AliasFor("remark")
     String value() default "";
 
+    /**
+     * 排除 方法，参数，或者返回结果
+     * */
+    Exclude[] exclude() default {};
+
     @AliasFor("value")
     String remark() default "";
     /**只对Controller有效 输出HTTP信息*/

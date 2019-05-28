@@ -22,6 +22,7 @@ public class GenericInvocationLogger<T extends Invocation> extends AbstractInvoc
 
     @Override
     public Message getResultMessage(T invocation, Object result) {
+
         String format ="[{}]";
         Class<?> type = invocation.getMethod().getReturnType();
         if(type.getName().equals("void")){

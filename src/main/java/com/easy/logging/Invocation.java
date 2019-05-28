@@ -7,16 +7,15 @@ public interface Invocation {
 
     Object proceed() throws Throwable;
 
+
+
     public long getStartTime();
 
     public long getEndTime();
 
-
     public Method getMethod();
 
-
     public Class<?> getTarget();
-
 
     public Object[] getArgurments();
 

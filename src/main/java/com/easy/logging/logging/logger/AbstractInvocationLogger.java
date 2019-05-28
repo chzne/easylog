@@ -1,20 +1,25 @@
 package com.easy.logging.logging.logger;
 
-import com.easy.logging.InvocationLogger;
 import com.easy.logging.Invocation;
-import com.easy.logging.Session;
-import com.easy.logging.Trace;
+import com.easy.logging.InvocationLogger;
 import com.easy.logging.logging.config.InvocationLoggingConfig;
-import com.easy.logging.session.SessionHolder;
+import com.easy.logging.logging.logger.wrapper.LoggerWrapper;
+import com.easy.logging.spring.annotation.Exclude;
 import com.easy.logging.spring.annotation.Logging;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Data
 public abstract class AbstractInvocationLogger<T extends Invocation> implements InvocationLogger<T> {
 
 
     private final InvocationLoggingConfig config;
+
+    private Map<String, LoggerWrapper> loggerCache = new ConcurrentHashMap<>();
 
     public AbstractInvocationLogger(InvocationLoggingConfig config){
         this.config = config;
@@ -25,12 +30,27 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
     public abstract Message getResultMessage(T invocation,Object result);
 
 
+    protected boolean isExcludeParamInLoggingAnnotation(T invocation,Exclude param){
+        Logging logging= invocation.getMethod().getAnnotation(Logging.class);
+        if(logging!=null && logging.exclude()!=null ){
+            Exclude[] exclution = logging.exclude();
+            for (Exclude exclude : exclution) {
+                if(exclude.equals(param)){
+                    return true;
+                }
+            }
 
+        }
+        return false;
+    }
 
     @Override
     public final void before(T invocation) {
         if(config.isIncludeArgurments()){
-            Message message = getArgurmentsMessage(invocation);
+            Message message=new Message("","");
+            if(isExcludeParamInLoggingAnnotation(invocation,Exclude.ARGUMENTS)){
+                 message = getArgurmentsMessage(invocation);
+            }
             doLogging(invocation,config.getBeforePrefix()+message.getFormat()+config.getBeforeSuffix(),message.getMessage(),"");
         }
     }
@@ -46,7 +66,11 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
     @Override
     public final void after(T invocation, Object result) {
         if(config.isIncludeResult()){
-            Message message = getResultMessage(invocation,result);
+            Message message=new Message("","");
+            if(isExcludeParamInLoggingAnnotation(invocation,Exclude.RESULT)){
+                 message = getResultMessage(invocation,result);
+            }
+
             String elapsedTimeMessage ="";
             if(config.isIncludeElapsedTime()){
                 elapsedTimeMessage = getElapsedTimeMessage(invocation);
@@ -79,14 +103,23 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
 
     }
 
-    protected Logger getLogger(Invocation invocation){
-        Logger logger = LoggerFactory.getLogger(invocation.getTarget());
-        return logger;
+    protected LoggerWrapper getLogger(Invocation invocation){
+        if(loggerCache.get(invocation.getTarget().getName())!=null){
+            return loggerCache.get(invocation.getTarget().getName());
+        }else{
+            Logger logger = LoggerFactory.getLogger(invocation.getTarget());
+            LoggerWrapper loggerWrapper = new LoggerWrapper(logger);
+            loggerCache.put(invocation.getTarget().getName(),new LoggerWrapper(logger));
+            return loggerWrapper;
+
+        }
+
+
     }
 
     protected void doLogging(T invocation,String format,Object args,String append){
 
-        Logger log = getLogger(invocation);
+        LoggerWrapper log = getLogger(invocation);
         if(invocation.getMethod()!=null && config.isIncludeLoggingAnnotationValue()){
             Logging logging= invocation.getMethod().getAnnotation(Logging.class);
             if(logging!=null && logging.value()!=null ){
