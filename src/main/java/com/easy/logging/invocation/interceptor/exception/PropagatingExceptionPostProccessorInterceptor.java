@@ -2,10 +2,10 @@ package com.easy.logging.invocation.interceptor.exception;
 
 import com.easy.logging.Invocation;
 import com.easy.logging.Session;
-import com.easy.logging.invocation.interceptor.ExceptionInvocationInterceptor;
+import com.easy.logging.invocation.interceptor.ExceptionInvocationPostProccessorInterceptor;
 
 
-public class PropagatingExceptionInterceptor extends ExceptionInvocationInterceptor {
+public class PropagatingExceptionPostProccessorInterceptor extends ExceptionInvocationPostProccessorInterceptor {
 
     protected final static String DEFAULT_SESSION_EXCEPTION_ATTRIBUTE_NAME="DEFAULT_SESSION_EXCEPTION_ATTRIBUTE_NAME";
 

@@ -1,9 +1,9 @@
 package com.easy.logging.invocation.interceptor;
 
 import com.easy.logging.InvocationStage;
-import com.easy.logging.InvocationInterceptor;
+import com.easy.logging.InvocationPostProccessorInterceptor;
 
-public abstract class BeforeInvocationInterceptor implements InvocationInterceptor {
+public abstract class BeforeInvocationPostProccessorInterceptor implements InvocationPostProccessorInterceptor {
 
     @Override
     public final InvocationStage[] getInvocationStage(){

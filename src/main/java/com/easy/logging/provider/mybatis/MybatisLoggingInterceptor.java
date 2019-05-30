@@ -1,5 +1,8 @@
 package com.easy.logging.provider.mybatis;
 
+import com.easy.logging.Session;
+
+import com.easy.logging.SessionManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -26,6 +29,11 @@ import java.util.Properties;
 public class MybatisLoggingInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
+
+        Session session = SessionManager.SessionHolder.getSession();
+        if(!session.isInProcess()){
+            return invocation.proceed();
+        }
         MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
         Object parameter = null;
         if (invocation.getArgs().length > 1) {

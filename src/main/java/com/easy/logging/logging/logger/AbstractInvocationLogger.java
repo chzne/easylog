@@ -25,7 +25,7 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
         this.config = config;
     }
 
-    public abstract Message getArgurmentsMessage(T invocation);
+    public abstract Message getArgumentsMessage(T invocation);
 
     public abstract Message getResultMessage(T invocation,Object result);
 
@@ -39,17 +39,16 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
                     return true;
                 }
             }
-
         }
         return false;
     }
 
     @Override
     public final void before(T invocation) {
-        if(config.isIncludeArgurments()){
+        if(config.isIncludeArguments()){
             Message message=new Message("","");
             if(!isExcludeParamInLoggingAnnotation(invocation,Exclude.ARGUMENTS)){
-                 message = getArgurmentsMessage(invocation);
+                 message = getArgumentsMessage(invocation);
             }
             doLogging(invocation,config.getBeforePrefix()+message.getFormat()+config.getBeforeSuffix(),message.getMessage(),"");
         }

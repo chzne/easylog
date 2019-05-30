@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 )
 @ConditionalOnWebApplication
 @AutoConfigureAfter(EasylogAutoConfiguration.class)
-
 public class MvcLoggingAutoConfiguration {
 
     @Bean
@@ -30,6 +31,7 @@ public class MvcLoggingAutoConfiguration {
         pointcut.addTargetAnnotation(Controller.class);
         pointcut.addTargetAnnotation(Service.class);
         pointcut.addTargetAnnotation(Repository.class);
+        pointcut.addMethodAnnotation(Scheduled.class);
         return pointcut;
     }
 

@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class InvocationLoggingConfig {
 
-    private boolean includeArgurments = true;
+    private boolean includeArguments = true;
 
     private boolean includeResult = true;
 

@@ -6,7 +6,7 @@ import com.easy.logging.Session;
 
 import java.util.List;
 
-public interface InvocationInterceptor {
+public interface InvocationPostProccessorInterceptor {
 
     public boolean intercept(Session session, Invocation invocation);
 

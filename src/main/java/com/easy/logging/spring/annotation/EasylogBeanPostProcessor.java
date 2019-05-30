@@ -21,10 +21,6 @@ public class EasylogBeanPostProcessor implements BeanPostProcessor, ApplicationC
             ((InvocationProxyAware) bean).setInvocationProxy(invocationProxy);
         }
 
-        if(bean instanceof SessionListener){
-            InvocationProxy invocationProxy = applicationContext.getBean(InvocationProxy.class);
-            invocationProxy.addSessionListener((SessionListener) bean);
-        }
         if(InvocationProxyHolder.getInvocationProxy()==null){
             InvocationProxy invocationProxy = applicationContext.getBean(InvocationProxy.class);
             InvocationProxyHolder.setInvocationProxy(invocationProxy);

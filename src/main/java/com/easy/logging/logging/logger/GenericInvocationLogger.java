@@ -1,7 +1,6 @@
 package com.easy.logging.logging.logger;
 
 import com.easy.logging.Invocation;
-import com.easy.logging.InvocationLogger;
 import com.easy.logging.logging.config.InvocationLoggingConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,11 +12,11 @@ public class GenericInvocationLogger<T extends Invocation> extends AbstractInvoc
     }
 
     @Override
-    public Message getArgurmentsMessage(T invocation) {
+    public Message getArgumentsMessage(T invocation) {
         String method = invocation.getMethod().getName();
-        String placeHolder = getPlaceHolder(invocation.getArgurments().length);
+        String placeHolder = getPlaceHolder(invocation.getArguments().length);
         String format = method+"("+placeHolder+")";
-        return new Message(format,invocation.getArgurments());
+        return new Message(format,invocation.getArguments());
     }
 
     @Override

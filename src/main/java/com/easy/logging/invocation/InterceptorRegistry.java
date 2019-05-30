@@ -1,6 +1,6 @@
 package com.easy.logging.invocation;
 
-import com.easy.logging.InvocationInterceptor;
+import com.easy.logging.InvocationPostProccessorInterceptor;
 import com.easy.logging.InvocationStage;
 
 import java.util.List;
@@ -8,9 +8,9 @@ import java.util.List;
 public interface InterceptorRegistry {
 
 
-    public void register(InvocationInterceptor invocationInterceptor);
+    public void register(InvocationStage invocationStage, InvocationPostProccessorInterceptor invocationPostProccessorInterceptor);
 
-    public List<InvocationInterceptor> getInvocationInterceptor(InvocationStage invocationStage);
+    public List<InvocationPostProccessorInterceptor> getInvocationInterceptor(InvocationStage invocationStage);
 
 
 }

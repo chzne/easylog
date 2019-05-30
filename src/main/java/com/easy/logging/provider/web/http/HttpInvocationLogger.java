@@ -200,7 +200,7 @@ public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainIn
     }
 
     @Override
-    public Message getArgurmentsMessage(FilterChainInvocationAdapter invocation) {
+    public Message getArgumentsMessage(FilterChainInvocationAdapter invocation) {
         String message = createMessage(invocation.getHttpServletRequest());
 
         return new Message("{}",message);

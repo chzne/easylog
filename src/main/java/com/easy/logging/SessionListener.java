@@ -1,14 +1,14 @@
 package com.easy.logging;
 
 
-import com.easy.logging.session.SessionDestroyedEvent;
-import com.easy.logging.session.SessionStartedEvent;
+import com.easy.logging.session.SessionClosedEvent;
+import com.easy.logging.session.SessionCreatedEvent;
 
 public interface SessionListener {
 
 
-    public void started(SessionStartedEvent se);
+    public void created(SessionCreatedEvent se);
 
 
-    public void destroyed(SessionDestroyedEvent se);
+    public void closed(SessionClosedEvent se);
 }

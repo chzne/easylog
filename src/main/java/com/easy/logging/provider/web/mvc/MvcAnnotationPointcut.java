@@ -1,6 +1,6 @@
 package com.easy.logging.provider.web.mvc;
 
-import com.easy.logging.invocation.proxy.LogInvocationProxy;
+import com.easy.logging.invocation.proxy.LoggingInvocationProxy;
 import org.springframework.aop.support.StaticMethodMatcherPointcut;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.util.ClassUtils;
@@ -27,7 +27,7 @@ public class MvcAnnotationPointcut extends StaticMethodMatcherPointcut {
 
     @Override
     public boolean matches(Method method, Class<?> targetClass) {
-        if (targetClass != null && LogInvocationProxy.class.isAssignableFrom(targetClass)) {
+        if (targetClass != null && LoggingInvocationProxy.class.isAssignableFrom(targetClass)) {
             return false;
         } else {
             Class<?> userClass = ClassUtils.getUserClass(targetClass);

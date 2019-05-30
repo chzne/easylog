@@ -15,7 +15,7 @@ public class DubboInvocationAdapter extends InvocationAdapter {
 
     public DubboInvocationAdapter(Invoker<?> invoker, RpcInvocation rpcInvocation)  {
         setTarget(invoker.getInterface());
-        setArgurments(rpcInvocation.getArguments());
+        setArguments(rpcInvocation.getArguments());
         try {
             Method method = invoker.getInterface().getMethod(rpcInvocation.getMethodName(), rpcInvocation.getParameterTypes());
             setMethod(method);

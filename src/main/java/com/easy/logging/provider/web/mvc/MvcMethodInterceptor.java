@@ -15,7 +15,7 @@ public class MvcMethodInterceptor implements MethodInterceptor {
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         if(invocationProxy !=null){
-            return invocationProxy.delegating(new MvcInvocationAdapter(methodInvocation));
+            return invocationProxy.invoke(new MvcInvocationAdapter(methodInvocation));
         }else{
             return methodInvocation.proceed();
         }

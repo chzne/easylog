@@ -7,12 +7,12 @@ public class MethodInvocation extends AbstractInvocation {
     public MethodInvocation(Class<?> target, Method method, Object[] argurments) {
         setTarget(target);
         setMethod(method);
-        setArgurments(argurments);
+        setArguments(argurments);
     }
 
 
     @Override
     public Object doInvoke() throws Throwable {
-        return getMethod().invoke(getTarget(),getArgurments());
+        return getMethod().invoke(getTarget(), getArguments());
     }
 }

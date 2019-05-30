@@ -7,8 +7,6 @@ public interface Invocation {
 
     Object proceed() throws Throwable;
 
-
-
     public long getStartTime();
 
     public long getEndTime();
@@ -17,7 +15,7 @@ public interface Invocation {
 
     public Class<?> getTarget();
 
-    public Object[] getArgurments();
+    public Object[] getArguments();
 
     public Object getAttribute(String key);
 

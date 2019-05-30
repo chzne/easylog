@@ -1,19 +1,19 @@
 package com.easy.logging.invocation;
 
 import com.easy.logging.Invocation;
-import com.easy.logging.InvocationLogger;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class AbstractInvocation implements Invocation {
 
     private HashMap<String,Object> attributeMap = new HashMap<>();
 
     private  Class<?> target;
+
     private  Method method;
-    private  Object[] argurments;
+
+    private  Object[] arguments;
 
     protected long startTime;
 
@@ -27,8 +27,8 @@ public abstract class AbstractInvocation implements Invocation {
         this.method = method;
     }
 
-    protected void setArgurments(Object[] argurments) {
-        this.argurments = argurments;
+    protected void setArguments(Object[] arguments) {
+        this.arguments = arguments;
     }
 
     @Override
@@ -42,8 +42,8 @@ public abstract class AbstractInvocation implements Invocation {
     }
 
     @Override
-    public Object[] getArgurments() {
-        return argurments;
+    public Object[] getArguments() {
+        return arguments;
     }
 
 

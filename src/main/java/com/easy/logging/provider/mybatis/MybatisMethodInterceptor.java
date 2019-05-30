@@ -17,6 +17,6 @@ public class MybatisMethodInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        return invocationProxy.delegating(new MvcInvocationAdapter(methodInvocation));
+        return invocationProxy.invoke(new MvcInvocationAdapter(methodInvocation));
     }
 }

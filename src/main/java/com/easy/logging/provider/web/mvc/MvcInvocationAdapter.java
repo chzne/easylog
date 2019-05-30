@@ -17,7 +17,7 @@ public class MvcInvocationAdapter extends InvocationAdapter {
     public MvcInvocationAdapter(MethodInvocation methodInvocation){
         setTarget(methodInvocation.getThis().getClass());
         setMethod(methodInvocation.getMethod());
-        setArgurments(methodInvocation.getArguments());
+        setArguments(methodInvocation.getArguments());
         this.methodInvocation = methodInvocation;
         target = getTargetClass(methodInvocation);
     }

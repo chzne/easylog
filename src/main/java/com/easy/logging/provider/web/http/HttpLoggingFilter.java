@@ -27,7 +27,7 @@ public class HttpLoggingFilter extends GenericFilterBean implements Advisor, Inv
 
             Method method = target.getMethod("doFilter", args);
             FilterChainInvocationAdapter filterChainInvocationAdapter = new FilterChainInvocationAdapter(target,method,(HttpServletRequest)servletRequest,(HttpServletResponse)servletResponse,filterChain );
-            invocationProxy.delegating(filterChainInvocationAdapter);
+            invocationProxy.invoke(filterChainInvocationAdapter);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (Throwable throwable) {

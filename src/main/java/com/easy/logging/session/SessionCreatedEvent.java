@@ -2,13 +2,17 @@ package com.easy.logging.session;
 
 import com.easy.logging.Invocation;
 import com.easy.logging.Session;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventType;
 import org.springframework.context.ApplicationEvent;
 
-public class SessionDestroyedEvent extends ApplicationEvent {
+public class SessionCreatedEvent extends ApplicationEvent {
+
     private final Session session;
     private final Invocation invocation;
 
-    public SessionDestroyedEvent(Session session, Invocation invocation) {
+    public SessionCreatedEvent(Session session, Invocation invocation) {
         super(session);
         this.session = session;
         this.invocation = invocation;

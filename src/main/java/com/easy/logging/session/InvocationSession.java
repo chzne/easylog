@@ -6,17 +6,17 @@ import com.easy.logging.Trace;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class DistributedSession implements Session {
+public class InvocationSession implements Session {
 
 
 
     public final static String DEFAULT_TRACE_MDC_PARAMETER_NAME = "traceId";
 
-
-
     protected Trace trace;
 
     protected boolean started=false;
+
+    protected boolean closed=false;
 
     protected Random random = new Random();
 
@@ -24,7 +24,17 @@ public class DistributedSession implements Session {
 
     protected Invocation headInvocation;
 
+    protected long createdTime;
 
+    protected long lastStartedTime;
+
+    protected long lastStoppedTime;
+
+    protected long closedTime;
+
+    protected boolean inProcess=false;
+
+    private boolean stopped=false;
 
     @Override
     public String getSessionId() {
@@ -37,27 +47,57 @@ public class DistributedSession implements Session {
     }
 
     @Override
+    public long getCreatedTime() {
+        return createdTime;
+    }
+
+    @Override
+    public long getLastStartedTime() {
+        return lastStartedTime;
+    }
+
+    @Override
+    public long getLastStoppedTime() {
+        return lastStoppedTime;
+    }
+
+    @Override
     public void setTrace(Trace trace) {
         this.trace = trace;
     }
 
-
-
     @Override
     public boolean isStarted() {
-        return false;
+        return started;
     }
+
+    @Override
+    public boolean isInProcess() {
+        return inProcess;
+    }
+
 
     @Override
     public void start(Invocation invocation) {
-        if(started){
+        if(closed || started){
             return;
         }
         this.headInvocation = invocation;
+        createdTime=System.currentTimeMillis();
         started=true;
+        inProcess= true;
+    }
 
+    @Override
+    public void stop(Invocation invocation) {
+        if(!stopped){
+            stopped=true;
+            lastStoppedTime=System.currentTimeMillis();
+            inProcess=false;
+        }
 
     }
+
 
 
 
@@ -91,13 +131,23 @@ public class DistributedSession implements Session {
     }
 
     @Override
-    public void destory(Invocation invocation) {
+    public void close(Invocation invocation) {
 
+        if(!closed){
+            stopped=true;
+            closed=true;
+            closedTime=System.currentTimeMillis();
+        }
     }
 
     @Override
-    public boolean isDestoried() {
-        return false;
+    public boolean isClosed() {
+        return closed;
+    }
+
+    @Override
+    public boolean isStopped() {
+        return stopped;
     }
 
 

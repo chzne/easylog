@@ -2,9 +2,9 @@ package com.easy.logging.trace.advice;
 
 import com.easy.logging.*;
 import com.easy.logging.PostProcessor;
-import com.easy.logging.session.SessionDestroyedEvent;
-import com.easy.logging.session.SessionHolder;
-import com.easy.logging.session.SessionStartedEvent;
+import com.easy.logging.session.SessionClosedEvent;
+
+import com.easy.logging.session.SessionCreatedEvent;
 import com.easy.logging.TraceAttachment;
 import com.easy.logging.Trace;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +24,11 @@ public class TracePostProcessor implements PostProcessor, Ordered ,SessionListen
     }
 
     @Override
-    public void started(SessionStartedEvent se) {
+    public void created(SessionCreatedEvent se) {
         Session session = se.getSession();
         Invocation invocation = se.getInvocation();
         Tracer tracer = tracerRegistry.getTracer(invocation.getClass());
-        Trace trace = SessionHolder.getSession().getTrace();
+        Trace trace = SessionManager.SessionHolder.getSession().getTrace();
         if(tracer!=null){
             if(trace==null){
                 if(tracer.canExtract(invocation)){
@@ -47,7 +47,7 @@ public class TracePostProcessor implements PostProcessor, Ordered ,SessionListen
     }
 
     @Override
-    public void destroyed(SessionDestroyedEvent se) {
+    public void closed(SessionClosedEvent se) {
 
     }
 
@@ -57,11 +57,9 @@ public class TracePostProcessor implements PostProcessor, Ordered ,SessionListen
     @Override
     public void before(Invocation invocation) {
         Tracer tracer = tracerRegistry.getTracer(invocation.getClass());
-        Session session = SessionHolder.getSession();
-        Trace trace = SessionHolder.getSession().getTrace();
+        Trace trace = SessionManager.SessionHolder.getSession().getTrace();
         if(trace!=null && tracer!=null){
             if(tracer.canInject(invocation)){
-
                 TraceAttachment traceAttachment = new TraceAttachment(trace.getTraceId());
                 tracer.inject(invocation, traceAttachment);
             }

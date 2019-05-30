@@ -31,7 +31,7 @@ public class DubboLoggingFilter implements Filter, Advisor {
         if(invocationProxy!=null){
             DubboInvocationAdapter adapter = new DubboInvocationAdapter(invoker, (RpcInvocation) invocation);
             try {
-                return (Result) invocationProxy.delegating(adapter);
+                return (Result) invocationProxy.invoke(adapter);
             } catch (Throwable throwable) {
                 throw new RpcException(throwable.getMessage(),throwable);
             }

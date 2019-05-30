@@ -1,7 +1,6 @@
 package com.easy.logging;
 
 
-import com.easy.logging.SessionListener;
 import com.easy.logging.invocation.adapter.InvocationAdapter;
 
 /**
@@ -10,7 +9,7 @@ import com.easy.logging.invocation.adapter.InvocationAdapter;
  * */
 public interface InvocationProxy {
 
-    public Object delegating(InvocationAdapter invocation) throws Throwable;
+    public Object invoke(InvocationAdapter invocation) throws Throwable;
 
-    public void addSessionListener(SessionListener sessionListener);
+
 }
