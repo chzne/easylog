@@ -13,7 +13,7 @@
         <java.version>1.8</java.version>
         <spring.boot>1.5.8.RELEASE</spring.boot>
         <spring.springframework>4.3.12.RELEASE</spring.springframework>
-        <dubbo.version>2.7.1</dubbo.version>
+        <dubbo.version>2.5.3</dubbo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
