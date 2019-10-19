@@ -36,12 +36,12 @@ public class TracePostProcessor implements PostProcessor, Ordered ,SessionListen
                     if(traceAttachment !=null){
                         trace = Trace.TraceBuilder.build(tracer,invocation,traceIdGenerator);
                     }else{
-                        trace = Trace.TraceBuilder.build(traceIdGenerator);
+                        trace = Trace.TraceBuilder.build(invocation,traceIdGenerator);
                     }
                 }
             }
         }else{
-            trace = Trace.TraceBuilder.build(traceIdGenerator);
+            trace = Trace.TraceBuilder.build(invocation,traceIdGenerator);
         }
         session.setTrace(trace);
     }

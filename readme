@@ -1,10 +1,10 @@
 Introduction to Easylog
-1.What's Easylog
+1.What is  Easylog
 Easylog is a logging framework for Spring Web Mvc
 
 2.how to use it
 
-you just need to add the @EnableEasylogApspect annotation on your  SpringbootApplication class
+you just need to add the @EnableEasylogApspect annotation on your SpringbootApplication class
 then it will works automatically
 
 3.dose it supports other logging framework except Logback
@@ -22,8 +22,8 @@ public class HelloSpringBootApplication {
 
 }
 
-2 you can use @Logging annotation to giving a description for your method .
-the description  will appears in your log file to help you distinguish the invocation of a method .
+2 you can use @Logging annotation to give a description for your method .
+the description  will appears in your log file to help you distinguishing the invocation of a method .
 
 @Logging(value = "the description for method", include = {Request.CLIENT, Request.HEADER})
 @RequestMapping(value = "/helloWord", method = {RequestMethod.POST})

@@ -11,8 +11,10 @@ public class PropagatingExceptionPostProccessorInterceptor extends ExceptionInvo
 
     @Override
     public boolean intercept(Session session, Invocation invocation) {
+
         Object exception = session.getAttribute(DEFAULT_SESSION_EXCEPTION_ATTRIBUTE_NAME);
         if(exception!=null){
+
             return true;
         }
         session.setAttribute(DEFAULT_SESSION_EXCEPTION_ATTRIBUTE_NAME,"true");

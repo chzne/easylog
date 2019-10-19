@@ -88,12 +88,16 @@ public class LoggingInvocationProxy implements InvocationProxy{
                 if(!isLoggingSystemException){
                     if(!throughException){
                         if(!interceptInvocationPostProcessor(session,invocation,InvocationStage.AFTER) && postProcessor!=null){
-                            postProcessor.after(invocation,result);
+                            if(!session.isHeadInvocation(invocation)){
+                                postProcessor.after(invocation,result);
+                            }
+
                         }
                     }
                 }
             }
-            if(session.isHeadInvocation(invocation)){
+            if(!isSessionStoped && session.isHeadInvocation(invocation)){
+                postProcessor.after(invocation,null);
                 sessionManager.close(invocation);
             }
         }

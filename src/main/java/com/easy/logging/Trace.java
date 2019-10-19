@@ -1,7 +1,7 @@
 package com.easy.logging;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
 import org.slf4j.MDC;
+import org.springframework.util.StringUtils;
 
 public class Trace {
 
@@ -28,13 +28,13 @@ public class Trace {
                 traceId = traceAttachment.getTraceId();
             }
             if (StringUtils.isEmpty(traceId)) {
-                traceId = traceIdGenerator.getTraceId();
+                traceId = traceIdGenerator.getTraceId(invocation);
             }
             return new Trace(traceId);
         }
 
-        public static Trace build(TraceIdGenerator traceIdGenerator){
-            return new Trace(traceIdGenerator.getTraceId());
+        public static Trace build(Invocation invocation,TraceIdGenerator traceIdGenerator){
+            return new Trace(traceIdGenerator.getTraceId(invocation));
         }
     }
 

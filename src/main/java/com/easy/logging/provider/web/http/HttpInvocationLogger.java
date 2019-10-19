@@ -1,10 +1,14 @@
 package com.easy.logging.provider.web.http;
 
 import com.easy.logging.Invocation;
+import com.easy.logging.LoggingPayload;
+import com.easy.logging.Session;
+import com.easy.logging.SessionManager;
 import com.easy.logging.logging.config.InvocationLoggingConfig;
 import com.easy.logging.logging.logger.AbstractInvocationLogger;
 import com.easy.logging.logging.logger.Message;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -12,8 +16,11 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
+
 @Slf4j
 public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainInvocationAdapter> {
 
@@ -27,6 +34,7 @@ public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainIn
 
 
     private final static String INCLUDE_ATTRIBUTE_VALUE = "YES";
+    private final ObjectProvider<LoggingPayload[]> loggingPayloadProviders;
 
 
     private boolean includeQueryString = false;
@@ -39,8 +47,9 @@ public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainIn
 
     private int maxPayloadLength = DEFAULT_MAX_PAYLOAD_LENGTH;
 
-    public HttpInvocationLogger(InvocationLoggingConfig config) {
+    public HttpInvocationLogger(InvocationLoggingConfig config, ObjectProvider<LoggingPayload[]> loggingPayloadProviders) {
         super(config);
+        this.loggingPayloadProviders = loggingPayloadProviders;
     }
 
 
@@ -134,7 +143,7 @@ public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainIn
         return true;
     }
 
-    protected String createMessage(HttpServletRequest request) {
+    protected String createMessage(HttpServletRequest request, HttpServletResponse response,boolean isStart) {
         StringBuilder msg = new StringBuilder();
         msg.append("uri=").append(request.getRequestURI());
         if (includeQueryString) {
@@ -143,11 +152,14 @@ public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainIn
                 msg.append('?').append(queryString);
             }
         }
-        getIncludeMessage(request, msg);
+        getIncludeMessage(request, msg,response);
+
+        msg.append(" ThreadSession:").append(SessionManager.SessionHolder.getSession().getAttributes().toString());
+
         return msg.toString();
     }
 
-    protected void getIncludeMessage(HttpServletRequest request, StringBuilder msg) {
+    protected void getIncludeMessage(HttpServletRequest request, StringBuilder msg, HttpServletResponse response) {
 
 
         //map.put("ex", ThrowableProxyConverter.class.getName());
@@ -178,6 +190,17 @@ public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainIn
                 msg.append(";payload=").append(payload);
             }
         }
+        LoggingPayload[] payloadProviders = loggingPayloadProviders.getIfAvailable();
+        if(payloadProviders!=null && payloadProviders.length>0){
+            for (int i = 0; i < payloadProviders.length; i++) {
+
+                String name = payloadProviders[i].getName();
+                Map payload = payloadProviders[i].getPayload(request,  response);
+                msg.append(";"+name+"=").append(payload.toString());
+            }
+        }
+
+
 
     }
 
@@ -201,14 +224,14 @@ public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainIn
 
     @Override
     public Message getArgumentsMessage(FilterChainInvocationAdapter invocation) {
-        String message = createMessage(invocation.getHttpServletRequest());
+        String message = createMessage(invocation.getHttpServletRequest(),invocation.getHttpServletResponse(),true);
 
         return new Message("{}",message);
     }
 
     @Override
     public Message getResultMessage(FilterChainInvocationAdapter invocation, Object result) {
-        String message = createMessage(invocation.getHttpServletRequest());
+        String message = createMessage(invocation.getHttpServletRequest(),invocation.getHttpServletResponse(),false);
         return new Message("{}",message);
     }
 

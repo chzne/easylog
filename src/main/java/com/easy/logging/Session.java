@@ -1,6 +1,7 @@
 package com.easy.logging;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 public interface Session {
 
@@ -31,6 +32,8 @@ public interface Session {
     public LinkedList<Invocation> getInvocations();
 
     public Object getAttribute(String key);
+
+    public Map<String,Object> getAttributes();
 
     public void setAttribute(String key, Object value);
 

@@ -1,6 +1,5 @@
 package com.easy.logging.provider.web.http;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
 import com.easy.logging.Tracer;
 import com.easy.logging.TraceAttachment;
 
@@ -32,7 +31,7 @@ public class HttpLoggingTracer implements Tracer<FilterChainInvocationAdapter> {
 
             traceId = invocation.getHttpServletRequest().getHeader(traceParameterName);
         }
-        if (null == traceId || StringUtils.isBlank(traceId)) {
+        if (null == traceId) {
             return null;
         }
         TraceAttachment traceAttachment = new TraceAttachment(traceId);

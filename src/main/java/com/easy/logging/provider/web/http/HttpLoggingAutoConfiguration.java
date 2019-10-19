@@ -1,8 +1,11 @@
 package com.easy.logging.provider.web.http;
 
+import com.easy.logging.LoggingPayload;
+import com.easy.logging.SessionListener;
 import com.easy.logging.logging.config.InvocationLoggingConfig;
 import com.easy.logging.spring.autoconfigure.EasylogAutoConfiguration;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,12 +31,12 @@ public class HttpLoggingAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public HttpInvocationLogger httpInvocationLogger(InvocationLoggingConfig commonInvocationLoggingConfig){
+    public HttpInvocationLogger httpInvocationLogger(InvocationLoggingConfig commonInvocationLoggingConfig, ObjectProvider<LoggingPayload[]> loggingPayloadProviders){
         InvocationLoggingConfig config = new InvocationLoggingConfig();
         BeanUtils.copyProperties(commonInvocationLoggingConfig,config);
         config.setBeforePrefix("【请求地址】");
         config.setAfterPrefix("【请求结束】");
-        HttpInvocationLogger logger = new HttpInvocationLogger(config);
+        HttpInvocationLogger logger = new HttpInvocationLogger(config,loggingPayloadProviders);
         logger.setIncludeQueryString(true);
         logger.setIncludePayload(true);
         logger.setIncludeHeaders(false);

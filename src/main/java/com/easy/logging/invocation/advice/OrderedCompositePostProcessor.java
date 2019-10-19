@@ -12,6 +12,7 @@ public class OrderedCompositePostProcessor implements PostProcessor {
 
 
     private final ObjectProvider<PostProcessor[]> provider;
+    private PostProcessor[] postProcessors;
 
     public OrderedCompositePostProcessor(ObjectProvider<PostProcessor[]> provider){
 
@@ -27,12 +28,11 @@ public class OrderedCompositePostProcessor implements PostProcessor {
      */
     @Override
     public void before(Invocation invocation) {
-        PostProcessor[] postProcessors = this.provider.getIfAvailable();
-        try{
-            Arrays.stream(postProcessors).forEach(a ->a.before(invocation));
-        }catch (Exception e){
-            throw new EasylogSystemException();
+        if(postProcessors==null){
+            postProcessors = this.provider.getIfAvailable();
         }
+
+        Arrays.stream(postProcessors).forEach(a ->a.before(invocation));
 
     }
 
@@ -48,7 +48,7 @@ public class OrderedCompositePostProcessor implements PostProcessor {
         try{
             Arrays.stream(postProcessors).forEach(a ->a.after(invocation,result));
         }catch (Exception e){
-            throw new EasylogSystemException();
+            throw e;
         }
 
     }

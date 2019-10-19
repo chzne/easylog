@@ -7,6 +7,8 @@ import org.springframework.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,8 +18,16 @@ public class MvcAnnotationPointcut extends StaticMethodMatcherPointcut {
 
     protected List<Class<? extends Annotation>> methodAnnotations = new LinkedList<>();
 
+    protected HashSet<Class> excludeClass = new HashSet<>();
+
     public void addTargetAnnotation(Class<? extends Annotation> annotationClass) {
         targetAnnotations.add(annotationClass);
+    }
+
+    public void AddExcludeClass(Class mclass){
+
+        excludeClass.add(mclass);
+
     }
 
     public void addMethodAnnotation(Class<? extends Annotation> annotationClass) {
@@ -34,6 +44,10 @@ public class MvcAnnotationPointcut extends StaticMethodMatcherPointcut {
 
             Method specificMethod = ClassUtils.getMostSpecificMethod(method, userClass);
             specificMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
+
+            if(excludeClass.contains(userClass)){
+                return false;
+            }
 
 
             for (int j = 0; j < targetAnnotations.size(); j++) {
@@ -71,4 +85,6 @@ public class MvcAnnotationPointcut extends StaticMethodMatcherPointcut {
             return false;
         }
     }
+
+
 }

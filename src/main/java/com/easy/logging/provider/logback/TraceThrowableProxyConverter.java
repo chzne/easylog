@@ -12,7 +12,7 @@ public class TraceThrowableProxyConverter extends ThrowableProxyConverter {
 
     @Override
     public String convert(ILoggingEvent event) {
-        if (event.getLevel().equals(Level.ERROR)) {
+        if (event.getLevel().equals(Level.ERROR) || event.getLevel().equals(Level.WARN)) {
             String msg = super.convert(event);
             if(msg==null || msg.isEmpty()){
                  msg = event.getFormattedMessage();

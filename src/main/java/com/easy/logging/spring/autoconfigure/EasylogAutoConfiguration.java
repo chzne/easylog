@@ -9,6 +9,7 @@ import com.easy.logging.invocation.advice.OrderedCompositePostProcessor;
 import com.easy.logging.invocation.interceptor.AfterInvocationPostProccessorInterceptor;
 import com.easy.logging.invocation.interceptor.BeforeInvocationPostProccessorInterceptor;
 import com.easy.logging.invocation.interceptor.ExceptionInvocationPostProccessorInterceptor;
+import com.easy.logging.session.switcher.LoggingAnnotationSessionSwitcher;
 import com.easy.logging.session.switcher.SchedulingSessionSwitcher;
 import com.easy.logging.invocation.interceptor.exception.PropagatingExceptionPostProccessorInterceptor;
 import com.easy.logging.invocation.proxy.LoggingInvocationProxy;
@@ -143,6 +144,13 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
     public PropagatingExceptionPostProccessorInterceptor propagatingExceptionInterceptor(){
         PropagatingExceptionPostProccessorInterceptor interceptor = new PropagatingExceptionPostProccessorInterceptor();
         return interceptor;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public LoggingAnnotationSessionSwitcher loggingAnnotationSessionSwitcher(){
+        LoggingAnnotationSessionSwitcher switcher = new LoggingAnnotationSessionSwitcher();
+        return switcher;
     }
 
     @Bean

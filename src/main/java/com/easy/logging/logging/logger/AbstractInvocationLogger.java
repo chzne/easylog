@@ -6,12 +6,14 @@ import com.easy.logging.logging.config.InvocationLoggingConfig;
 import com.easy.logging.logging.logger.wrapper.LoggerWrapper;
 import com.easy.logging.spring.annotation.Exclude;
 import com.easy.logging.spring.annotation.Logging;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 @Data
 public abstract class AbstractInvocationLogger<T extends Invocation> implements InvocationLogger<T> {
@@ -92,7 +94,7 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
                 Exception exception = (Exception) throwable;
                 doLogging(invocation,config.getExceptionPrefix(),"","");
                 doLogging(invocation,config.getExceptionClassPrefix()+"{}",exception.getClass(),"");
-                doLogging(invocation,config.getExceptionMessagePrefix()+"{}",exception.getMessage(),"");
+                doLogging(invocation,config.getExceptionMessagePrefix()+"{}",exception.getMessage(),"",Level.WARNING);
                 doLogging(invocation,config.getExceptionLocationPrefix()+"{}",throwable.getStackTrace()[0].toString(),elapsedTimeMessage);
             }
 
@@ -116,40 +118,93 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
 
     }
 
-    protected void doLogging(T invocation,String format,Object args,String append){
-
+    protected void doLogging(T invocation, String format, Object args, String append, Level level)
+    {
         LoggerWrapper log = getLogger(invocation);
         if(invocation.getMethod()!=null && config.isIncludeLoggingAnnotationValue()){
             Logging logging= invocation.getMethod().getAnnotation(Logging.class);
             if(logging!=null && logging.value()!=null ){
                 format=logging.value()+" "+format;
+            }else{
+                ApiOperation apiOperation= invocation.getMethod().getAnnotation(ApiOperation.class);
+                if(apiOperation!=null && apiOperation.value()!=null ){
+                    format=apiOperation.value()+" "+format;
+                }
             }
         }
         if(args!=null && args.getClass().isArray()){
             Object[]  message = (Object[]) args;
             int number =message.length;
             if(number==1){
-                 log.info(format+append,message);
+                if(Level.INFO.equals(level)){
+                    log.info(format+append,message);
+                }else if(Level.WARNING.equals(level)){
+                    log.error(format+append,message);
+                }
+
             }else if(number==2){
-                 log.info(format+append,message[0],message[1]);
+                if(Level.INFO.equals(level)){
+                    log.info(format+append,message[0],message[1]);
+                }else if(Level.WARNING.equals(level)){
+                    log.error(format+append,message[0],message[1]);
+                }
+
             }else if(number==3){
-                 log.info(format+append,message[0],message[1],message[2]);
+                if(Level.INFO.equals(level)){
+                    log.info(format+append,message[0],message[1],message[2]);
+                }else if(Level.WARNING.equals(level)){
+                    log.error(format+append,message[0],message[1],message[2]);
+                }
+
             }else if(number==4){
-                 log.info(format+append,message[0],message[1],message[2],message[3]);
+                if(Level.INFO.equals(level)){
+                    log.info(format+append,message[0],message[1],message[2],message[3]);
+                }else if(Level.WARNING.equals(level)){
+                    log.error(format+append,message[0],message[1],message[2],message[3]);
+                }
+
             }else if(number==5){
-                 log.info(format+append,message[0],message[1],message[2],message[3],message[4]);
+                if(Level.INFO.equals(level)){
+                    log.info(format+append,message[0],message[1],message[2],message[3],message[4]);
+                }else if(Level.WARNING.equals(level)){
+                    log.error(format+append,message[0],message[1],message[2],message[3],message[4]);
+                }
+
             }else if(number==6){
-                 log.info(format+append,message[0],message[1],message[2],message[3],message[4],message[5]);
+                if(Level.INFO.equals(level)){
+                    log.info(format+append,message[0],message[1],message[2],message[3],message[4],message[5]);
+                }else if(Level.WARNING.equals(level)){
+                    log.error(format+append,message[0],message[1],message[2],message[3],message[4],message[5]);
+                }
+
             }else if(number==7){
-                 log.info(format+append,message[0],message[1],message[2],message[3],message[4],message[5],message[6]);
+                if(Level.INFO.equals(level)){
+                    log.info(format+append,message[0],message[1],message[2],message[3],message[4],message[5],message[6]);
+                }else if(Level.WARNING.equals(level)){
+                    log.error(format+append,message[0],message[1],message[2],message[3],message[4],message[5],message[6]);
+                }
+
             }else if(number==8){
-                 log.info(format+append,message[0],message[1],message[2],message[3],message[4],message[5],message[6],message[7]);
-            }else{
-                 log.info(format+append,message);
+                if(Level.INFO.equals(level)){
+                    log.info(format+append,message[0],message[1],message[2],message[3],message[4],message[5],message[6],message[7]);
+                }else if(Level.WARNING.equals(level)){
+                    log.error(format+append,message[0],message[1],message[2],message[3],message[4],message[5],message[6],message[7]);
+                }
+
             }
 
         }else{
-             log.info(format+append,args);
+            if(Level.INFO.equals(level)){
+                log.info(format+append,args);
+            }else if(Level.WARNING.equals(level)){
+                log.error(format+append,args);
+            }
+
         }
+    }
+
+    protected void doLogging(T invocation,String format,Object args,String append){
+
+        doLogging(invocation,format,args,append,Level.INFO);
     }
 }

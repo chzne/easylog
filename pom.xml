@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.easy</groupId>
     <artifactId>log</artifactId>
-    <version>0.2.7-RELEASE</version>
+    <version>0.4.7-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>easylog</name>
     <description>Demo project for Spring Boot</description>
@@ -54,6 +54,13 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
             <version>1.8.9</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.5.14</version>
             <scope>provided</scope>
         </dependency>
 
@@ -112,6 +119,7 @@
             <version>1.5.8.RELEASE</version>
             <optional>true</optional>
         </dependency>
+
 
     </dependencies>
 
@@ -182,17 +190,19 @@
             </plugin>
         </plugins>
     </build>
+
+
     <distributionManagement>
         <repository>
-            <id>nexus</id>
-            <name>nexus</name>
-            <url>http://106.75.28.204/content/repositories/releases/</url>
+            <id>releases</id>
+            <url>http://maven.91jzx.cn/repository/maven-releases</url>
         </repository>
         <snapshotRepository>
-            <id>nexus</id>
-            <name>nexus</name>
-            <url>http://106.75.28.204/content/repositories/snapshots/</url>
+            <id>snapshots</id>
+            <url>http://maven.91jzx.cn/repository/maven-snapshots</url>
         </snapshotRepository>
+
+
     </distributionManagement>
 
 

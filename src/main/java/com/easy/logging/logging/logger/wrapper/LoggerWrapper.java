@@ -18,4 +18,13 @@ public class LoggerWrapper {
 
         logger.info(format,objects);
     }
+
+    public void error(String format,Object... objects){
+
+        for (int i = 0; i < objects.length; i++) {
+            // if(objects[i] instanceof )
+        }
+
+        logger.error(format,objects);
+    }
 }

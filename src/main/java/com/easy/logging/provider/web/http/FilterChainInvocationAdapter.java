@@ -13,6 +13,10 @@ public class FilterChainInvocationAdapter extends InvocationAdapter {
 
     protected HttpServletRequest httpServletRequest;
 
+    public HttpServletResponse getHttpServletResponse() {
+        return httpServletResponse;
+    }
+
     protected HttpServletResponse httpServletResponse;
 
     protected FilterChain filterChain;

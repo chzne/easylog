@@ -3,14 +3,19 @@ package com.easy.logging.session;
 import com.easy.logging.*;
 import com.easy.logging.Trace;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InvocationSession implements Session {
 
 
 
     public final static String DEFAULT_TRACE_MDC_PARAMETER_NAME = "traceId";
+
+    protected Map<String,Object>  attributeMap = new ConcurrentHashMap<>();
 
     protected Trace trace;
 
@@ -122,12 +127,18 @@ public class InvocationSession implements Session {
 
     @Override
     public Object getAttribute(String key) {
-        return null;
+        return attributeMap.get(key);
+
     }
 
     @Override
     public void setAttribute(String key, Object value) {
+         attributeMap.put(key,value);
+    }
 
+
+    public Map<String,Object> getAttributes() {
+        return attributeMap;
     }
 
     @Override

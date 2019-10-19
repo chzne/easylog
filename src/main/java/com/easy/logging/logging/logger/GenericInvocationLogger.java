@@ -4,6 +4,7 @@ import com.easy.logging.Invocation;
 import com.easy.logging.logging.config.InvocationLoggingConfig;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 public class GenericInvocationLogger<T extends Invocation> extends AbstractInvocationLogger<T> {
 
@@ -27,6 +28,7 @@ public class GenericInvocationLogger<T extends Invocation> extends AbstractInvoc
         if(type.getName().equals("void")){
             format =  "[void]";
         }
+
         return new Message(format,result);
     }
 

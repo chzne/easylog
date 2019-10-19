@@ -31,7 +31,8 @@ public class MybatisLoggingInterceptor implements Interceptor {
     public Object intercept(Invocation invocation) throws Throwable {
 
         Session session = SessionManager.SessionHolder.getSession();
-        if(!session.isInProcess()){
+
+        if(session==null || !session.isInProcess() || session.isStopped()){
             return invocation.proceed();
         }
         MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
@@ -47,7 +48,7 @@ public class MybatisLoggingInterceptor implements Interceptor {
         //获取sql语句
         String sql = showSql(configuration, boundSql);
         //获取数据源
-        log.info("SQL:[{}]",sql);
+        log.info("【SQL语句】:[{}]",sql);
 
         returnValue = invocation.proceed();
         return returnValue;

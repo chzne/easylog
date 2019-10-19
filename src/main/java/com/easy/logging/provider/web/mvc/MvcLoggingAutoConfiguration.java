@@ -1,6 +1,7 @@
 package com.easy.logging.provider.web.mvc;
 
 import com.easy.logging.InvocationProxy;
+import com.easy.logging.LoggingPayload;
 import com.easy.logging.spring.annotation.Logging;
 import com.easy.logging.spring.autoconfigure.EasylogAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -41,6 +42,8 @@ public class MvcLoggingAutoConfiguration {
         MvcMethodInterceptor mvcMethodInterceptor = new MvcMethodInterceptor(invocationProxy);
         return mvcMethodInterceptor;
     }
+
+
 
 
     @Bean
