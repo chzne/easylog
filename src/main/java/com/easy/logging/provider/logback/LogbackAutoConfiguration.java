@@ -8,6 +8,7 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.easy.logging.Trace;
+import com.easy.logging.monitor.MemoryAppender;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -27,7 +28,9 @@ public class LogbackAutoConfiguration   {
         ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
         if (iLoggerFactory instanceof LoggerContext) {
             LoggerContext loggerContext = (LoggerContext) iLoggerFactory;
+
             Logger logger = loggerContext.getLogger("ROOT");
+
             Iterator<Appender<ILoggingEvent>> appenders = logger.iteratorForAppenders();
             while (appenders.hasNext()) {
                 Appender<ILoggingEvent> appender =  appenders.next();
@@ -48,6 +51,10 @@ public class LogbackAutoConfiguration   {
                     layout.start();
                 }
             }
+
+            logger.addAppender(new MemoryAppender());
+
+
         }
     }
 

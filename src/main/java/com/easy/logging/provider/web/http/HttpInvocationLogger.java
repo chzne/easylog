@@ -161,10 +161,6 @@ public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainIn
 
     protected void getIncludeMessage(HttpServletRequest request, StringBuilder msg, HttpServletResponse response) {
 
-
-        //map.put("ex", ThrowableProxyConverter.class.getName());
-        //map.put("exception", ThrowableProxyConverter.class.getName());
-
         if (isIncludeClientInfo(request)) {
             String client = request.getRemoteAddr();
             if (StringUtils.hasLength(client)) {
@@ -187,6 +183,7 @@ public class HttpInvocationLogger extends AbstractInvocationLogger<FilterChainIn
         if (isIncludePayload(request)) {
             String payload = getMessagePayload(request);
             if (payload != null) {
+                SessionManager.SessionHolder.getSession().setAttribute("payload",payload);
                 msg.append(";payload=").append(payload);
             }
         }

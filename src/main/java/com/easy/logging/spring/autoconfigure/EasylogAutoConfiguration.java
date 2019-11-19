@@ -9,6 +9,7 @@ import com.easy.logging.invocation.advice.OrderedCompositePostProcessor;
 import com.easy.logging.invocation.interceptor.AfterInvocationPostProccessorInterceptor;
 import com.easy.logging.invocation.interceptor.BeforeInvocationPostProccessorInterceptor;
 import com.easy.logging.invocation.interceptor.ExceptionInvocationPostProccessorInterceptor;
+import com.easy.logging.monitor.MonitorPostProcessor;
 import com.easy.logging.session.switcher.LoggingAnnotationSessionSwitcher;
 import com.easy.logging.session.switcher.SchedulingSessionSwitcher;
 import com.easy.logging.invocation.interceptor.exception.PropagatingExceptionPostProccessorInterceptor;
@@ -27,13 +28,16 @@ import com.easy.logging.trace.generator.IncrementTraceIdGenerator;
 import com.easy.logging.trace.registry.SimpleTracerRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.util.Arrays;
 
@@ -45,7 +49,10 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
 
 
 
+    @Autowired
+    protected EasylogProperties easylogProperties;
     private ApplicationContext applicationContext;
+
     @Bean
     @ConditionalOnMissingBean
     public TraceIdGenerator traceIdGenerator() {
@@ -71,6 +78,14 @@ public class EasylogAutoConfiguration  implements ApplicationContextAware {
         config.setExceptionLocationPrefix("【异常位置】");
         return config;
     }
+
+    @Bean
+    @ConditionalOnProperty("easylog.dingdingUrl")
+    public MonitorPostProcessor monitorPostProcessor(){
+        MonitorPostProcessor processor = new MonitorPostProcessor(easylogProperties.getDingdingUrl());
+        return processor;
+    }
+
     @Bean
     @ConditionalOnMissingBean
     public GenericInvocationLogger genericInvocationLogger(InvocationLoggingConfig commonInvocationLoggingConfig){

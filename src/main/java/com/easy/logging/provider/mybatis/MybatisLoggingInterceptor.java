@@ -100,7 +100,12 @@ public class MybatisLoggingInterceptor implements Interceptor {
                     String propertyName = parameterMapping.getProperty();
                     if (metaObject.hasGetter(propertyName)) {
                         Object obj = metaObject.getValue(propertyName);
-                        sql = sql.replaceFirst("\\?", getParameterValue(obj));
+
+                        String value = this.getParameterValue(obj);
+                        sql = sql.replaceFirst("\\?",value.replaceAll("\\$", "RDS_CHAR_DOLLAR"));
+
+
+
                     } else if (boundSql.hasAdditionalParameter(propertyName)) {
                         Object obj = boundSql.getAdditionalParameter(propertyName);
                         sql = sql.replaceFirst("\\?", getParameterValue(obj));
@@ -108,6 +113,7 @@ public class MybatisLoggingInterceptor implements Interceptor {
                 }
             }
         }
+        sql = sql.replaceAll("RDS_CHAR_DOLLAR", "\\$");
         return sql;
     }
 

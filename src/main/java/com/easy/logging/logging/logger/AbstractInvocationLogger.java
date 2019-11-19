@@ -2,6 +2,7 @@ package com.easy.logging.logging.logger;
 
 import com.easy.logging.Invocation;
 import com.easy.logging.InvocationLogger;
+import com.easy.logging.SessionManager;
 import com.easy.logging.logging.config.InvocationLoggingConfig;
 import com.easy.logging.logging.logger.wrapper.LoggerWrapper;
 import com.easy.logging.spring.annotation.Exclude;
@@ -128,6 +129,7 @@ public abstract class AbstractInvocationLogger<T extends Invocation> implements 
             }else{
                 ApiOperation apiOperation= invocation.getMethod().getAnnotation(ApiOperation.class);
                 if(apiOperation!=null && apiOperation.value()!=null ){
+
                     format=apiOperation.value()+" "+format;
                 }
             }
